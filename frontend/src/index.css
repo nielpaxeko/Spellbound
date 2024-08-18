@@ -1,0 +1,78 @@
+:root {
+    --maroon: #600704;
+
+    --orange: #B96201;
+    --sand: #f1dcc5;
+    --hp-font: "hp";
+    --primary-font: 'playfair', sans-serif;
+    --secondary-font: 'lato', sans-serif;
+    --navy: #123b69;
+    --pink: #ac3b61;
+    --beige: #edc9b8;
+}
+
+/* Fonts */
+@font-face {
+    font-family: "hp";
+    src: url(/HARRYP__.TTF);
+}
+
+@font-face {
+    font-family: "playfair";
+    src: url(/PlayfairDisplay-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: "lato";
+    src: url(/Lato-Regular.ttf);
+}
+
+
+body {
+    font-family: var(--primary-font);
+    background: var(--beige);
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--navy);
+}
+
+.navbar-brand {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+
+/* Footer */
+.btn {
+    background: var(--maroon);
+    color: white;
+    border: 1px solid var(--maroon);
+    border-radius: 25px;
+}
+
+.btn:hover {
+    transition: transform 0.4s ease-in-out;
+    transform: scale(1.020);
+    background-color: white;
+    color: var(--maroon);
+    border: 1px solid var(--maroon);
+}
+
+.hp {
+    font-family: var(--hp-font);
+}
+
+.primary {
+    font-family: var(--primary-font);
+}
+
+.secondary {
+    font-family: var(--secondary-font);
+}
