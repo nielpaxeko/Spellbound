@@ -36,7 +36,6 @@ export const createUser = async (firstName, lastName, username, email, password)
 
 // Function to find a user by email
 export const findUserByEmail = async (email) => {
-    const query = `SELECT * FROM users WHERE email = $1`;
-    const result = await db.query(query, [email]);
+    const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     return result.rows[0];
 };

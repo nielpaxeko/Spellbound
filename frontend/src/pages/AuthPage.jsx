@@ -42,7 +42,7 @@ function AuthPage() {
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:3000/api/auth/signup", {
+            const response = await axios.post("/api/auth/signup", {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 username: formData.username,
@@ -59,39 +59,15 @@ function AuthPage() {
     };
 
     // Handle Sign In form submission
-    // const handleLogin = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await axios.post("http://localhost:3000/api/auth/login", {
-    //             email: formData.email,
-    //             password: formData.password
-    //         }, { withCredentials: true });
-    //         if (response.status === 200) {
-    //             alert("Login successful!");
-    //             navigate('/home');
-    //         } else {
-    //             alert("Login failed!");
-    //         }
-    //     } catch (error) {
-    //         console.error("Login error:", error);
-    //         alert(`Login failed: ${error.response?.data?.message || error.message}`);
-    //     }
-    // };
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            console.log('Sending login request:', {
-                email: formData.email,
-                password: formData.password
-            });
-    
-            const response = await axios.post("http://localhost:3000/api/auth/login", {
-                email: formData.email,
-                password: formData.password
+            const response = await axios.post("/api/auth/login", {
+                username: formData.email, // Update this line
+                password: formData.password,
             }, { withCredentials: true });
-    
-            console.log('Login response:', response);
-            if (response.status === 200) {
+            console.log("Login response:", response);
+            if (response.data.message === "Login successful") {
                 alert("Login successful!");
                 navigate('/home');
             } else {
@@ -102,7 +78,6 @@ function AuthPage() {
             alert(`Login failed: ${error.response?.data?.message || error.message}`);
         }
     };
-    
 
     return (
         <div className="page-wrapper">
