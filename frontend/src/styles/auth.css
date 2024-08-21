@@ -1,14 +1,4 @@
-:root {
-    --plum: #500153;
-    --pompadour: #660053;
-    --purple: #740378;
-    --violet: #8b0e72;
-    --royal: #a7328c;
-}
-
-
-
-.page-wrapper {
+.auth-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -129,7 +119,7 @@
 
 
 .toggle {
-    background: var(--royal);
+    background: var(--pink);
     height: 100%;
     color: white;
     position: relative;
@@ -204,17 +194,16 @@ input:hover {
     background-color: #b4d4ff;
 }
 
-h1 {
+.welcome-msg {
     color: var(--violet);
     font-size: 1.75rem;
-    margin: 0;
 }
 
-.btn {
+.auth-container .btn {
     font-size: 1rem;
 }
 
-.logo {
+.auth-container .logo {
     height: 200px;
 }
 
@@ -224,18 +213,20 @@ h1 {
 @media only screen and (max-width: 768px) {
     .auth-container {
         border-radius: 50px;
+        height: 650px;
     }
 
-    .btn {
+    .auth-container .btn {
         font-size: .8rem;
     }
 
-    .logo {
+    .auth-container .logo {
         height: 40px;
     }
 
-    h1 {
-        font-size: 1.3rem;
+    .welcome-msg {
+        font-size: 1.2rem;
+        margin: 0;
     }
 
     .toggle-container {
@@ -252,6 +243,7 @@ h1 {
     .auth-container.active .toggle-container {
         transform: translateX(-50%);
     }
+
     .auth-container form {
         padding-top: 45px;
     }

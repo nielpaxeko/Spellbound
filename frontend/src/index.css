@@ -2,12 +2,10 @@
     --hp-font: "hp";
     --primary-font: 'playfair', sans-serif;
     --secondary-font: 'lato', sans-serif;
-    --plum: #500153;
-    --pompadour: #660053;
-    --purple: #740378;
-    --violet: #8b0e72;
     --royal: #a7328c;
-    /* --turquoise: #00e0eb; */
+    --pink: #C745A9;
+    --maroon: #A73252;
+    --purple: #8732A7;
 }
 
 /* Fonts */
@@ -60,9 +58,9 @@ body {
 
 /* Footer */
 .btn {
-    background: var(--violet);
+    background: var(--royal);
     color: white;
-    border: 1px solid var(--violet);
+    border: 1px solid var(--royal);
     border-radius: 25px;
 
 }
@@ -71,22 +69,22 @@ body {
     transition: transform 0.4s ease-in-out;
     transform: scale(1.020);
     background-color: white;
-    color: var(--violet);
-    border: 1px solid var(--violet);
+    color: var(--royal);
+    border: 1px solid var(--royal);
 }
 
-.btn-inverted {
+.btn-pink {
     background: white;
-    color: var(--violet);
-    border: 1px solid var(--violet);
+    color: var(--pink);
+    border: 1px solid var(--pink);
     border-radius: 25px;
 
 }
 
-.btn-inverted:hover {
+.btn-pink:hover {
     transition: transform 0.4s ease-in-out;
     transform: scale(1.020);
-    background-color: var(--violet);
+    background-color: var(--pink);
     color: white;
     border: 1px solid white;
 }
@@ -101,6 +99,10 @@ body {
 
 .secondary {
     font-family: var(--secondary-font);
+}
+
+.royal {
+    color: var(--royal);
 }
 
 @media only screen and (max-width: 768px) {

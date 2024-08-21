@@ -1,22 +1,22 @@
 import express from "express";
-import { signup } from "../controllers/authController.js";
+import { signup, checkAuthStatus } from "../controllers/authController.js";
 import passport from "passport";
-import session from "express-session";
-
 
 const router = express.Router();
 
-const authenticate = (req, res, next) => {
-    if (req.isAuthenticated()) {
+// Chech auth status
+function loggedIn(req, res, next) {
+    if (req.user) {
         return next();
+    } else {
+        return res.redirect('/landing');
     }
-    res.redirect("/");
-};
+}
 
-// Signup Route
+// Signup
 router.post("/signup", signup);
 
-// Login Route
+// Login
 router.post("/login", (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err) {
@@ -35,12 +35,26 @@ router.post("/login", (req, res, next) => {
     })(req, res, next);
 });
 
-
-
-router.get("/home", authenticate, (req, res) => {
+// Home
+router.get("/home", loggedIn, (req, res) => {
     res.send('Welcome to the home page');
 });
 
+// Check Auth Status
+router.get('/status', checkAuthStatus);
 
+router.get('/profile', loggedIn, (req, res) => {
+    res.json(req.user);
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Logout failed', error: err });
+        }
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
 
 export default router;

@@ -80,12 +80,12 @@ function AuthPage() {
     };
 
     return (
-        <div className="page-wrapper">
+        <div className="auth-wrapper">
             <div className={`auth-container container-lg  ${!isLogin ? 'active' : ''}`}>
                 {/* Sign Up Form */}
                 <div className={`sign-up ${isLogin ? 'hidden' : ''}`}>
                     <form onSubmit={handleSignup}>
-                        <h1>Create Account</h1>
+                        <h1 style={{ color: "#a7328c" }}>Create Account</h1>
                         <input
                             type="text"
                             name="firstName"
@@ -130,14 +130,14 @@ function AuthPage() {
                         />
                         <button className="btn w-100" type="submit">Sign Up</button>
                         <p>Already have an account?</p>
-                        <button type="button" onClick={toggleForm} className="btn btn-inverted hidden" id="login-button">Login</button>
+                        <button type="button" onClick={toggleForm} className="btn hidden" id="login-button">Login</button>
                     </form>
                 </div>
 
                 {/* Sign In Form */}
                 <div className={`sign-in ${isLogin ? '' : 'hidden'}`}>
                     <form onSubmit={handleLogin}>
-                        <h1>Sign In</h1>
+                        <h1 style={{ color: "#a7328c" }}>Sign In</h1>
                         <input
                             type="text"
                             name="email"
@@ -154,7 +154,7 @@ function AuthPage() {
                         />
                         <button className="btn w-100" type="submit">Sign In</button>
                         <p>Don&apos;t have an account?</p>
-                        <button type="button" onClick={toggleForm} className="btn btn-inverted hidden" id="signup-button">Create Account</button>
+                        <button type="button" onClick={toggleForm} className="btn hidden" id="signup-button">Create Account</button>
                     </form>
                 </div>
 
@@ -165,13 +165,13 @@ function AuthPage() {
                         <div className="toggle-panel toggle-left">
 
                             <img src={logo} className="logo"></img>
-                            <h1 className="welcome-msg text-light">Welcome to SpellBound</h1>
+                            <h1 className="welcome-msg title text-light">Welcome to SpellBound</h1>
                         </div>
                         {/* Toggle Sign Up */}
                         <div className="toggle-panel toggle-right">
 
                             <img src={logo} className="logo"></img>
-                            <h1 className="welcome-msg text-light">Welcome back to SpellBound!</h1>
+                            <h1 className="welcome-msg title text-light">Welcome back to SpellBound!</h1>
                         </div>
                     </div>
                 </div>

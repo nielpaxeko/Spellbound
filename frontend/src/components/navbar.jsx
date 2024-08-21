@@ -1,29 +1,78 @@
+import React, { useState, useEffect } from 'react';
 import logo from "../assets/logo.png";
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 
 function NavigationBar() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        fetch('/api/auth/status', { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => setIsAuthenticated(data.isAuthenticated))
+            .catch(error => console.error('Error fetching auth status:', error));
+    }, []);
+
+    const handleLogout = () => {
+        fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    setIsAuthenticated(false);
+                    window.location.href = '/auth';
+                }
+            })
+            .catch(error => console.error('Error logging out:', error));
+    };
+
     return (
         <Navbar className="p-2 navbar-dark" collapseOnSelect expand="md">
             <Container fluid className="container-xxl">
-                <Navbar.Brand href="/home" className="navbar-brand">
+                <Navbar.Brand href={isAuthenticated ? "/home" : "/landing"} className="navbar-brand">
                     <img src={logo} alt="brand" width="40" height="40" />
-                    <span className="fw-bold text-light">Spellbound</span>
+                    <span className="fw-bold text-light">SpellBound</span>
                 </Navbar.Brand>
                 <Navbar.Toggle className="navbar-toggler" aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">
                     <Nav className="navbar-nav">
-                        <Nav.Link className="nav-link text-light" href="/home">Home</Nav.Link>
-                        <Nav.Link className="nav-link text-light" href="#">Messages</Nav.Link>
-                        <Nav.Link className="nav-link text-light" href="#">Profile</Nav.Link>
-                        <Nav.Link className="nav-link text-light d-md-none" href="#">Log out</Nav.Link>
+                        <Nav.Link className="nav-link text-light" href={isAuthenticated ? "/home" : "/landing"}>
+                            Home
+                        </Nav.Link>
+                        {/* Display only if user is athenticated */}
+                        {isAuthenticated ? (
+                            <>
+                                <Nav.Link className="nav-link text-light" href="/messages">Messages</Nav.Link>
+                                <Nav.Link className="nav-link text-light" href="/profile">Profile</Nav.Link>
+                                <Nav.Link className="nav-link text-light d-md-none" onClick={handleLogout} style={{ cursor: 'pointer' }}>Log out</Nav.Link>
+                            </>
+                        ) : (
+                            <Nav.Link className="nav-link text-light d-md-none" href="/auth">
+                                Login
+                            </Nav.Link>
+                        )}
                     </Nav>
-                    <Nav className="ms-2 d-none d-md-inline">
-                        <Nav.Link className="btn btn-light nav-link rounded-pill" href="#">Log out</Nav.Link>
-                    </Nav>
+                    {isAuthenticated ? (
+                        <Nav className="ms-2 d-none d-md-inline">
+                            <Nav.Link className="btn btn-pink nav-link rounded-pill" onClick={handleLogout} style={{ cursor: 'pointer' }}>Log out</Nav.Link>
+                        </Nav>
+                    ) : (
+                        <Nav className="ms-2 d-none d-md-inline">
+                            <Nav.Link
+                                className="btn btn-pink nav-link rounded-pill"
+                                href="/auth"
+                                style={{ cursor: 'pointer' }}
+                            >
+                                Login
+                            </Nav.Link>
+                        </Nav>
+                    )}
                 </Navbar.Collapse>
             </Container>
         </Navbar>
     );
+
 }
 
 export default NavigationBar;
