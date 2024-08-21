@@ -1,11 +1,11 @@
 :root {
-    --maroon: #600704;
-    --plum: #70201d;
-    --lotus: ##803936;
-    --coral: #a67472;
-    --orange: #E10045;
-    --beige: #f1dcc5;
+    --plum: #500153;
+    --pompadour: #660053;
+    --purple: #740378;
+    --violet: #8b0e72;
+    --royal: #a7328c;
 }
+
 
 
 .page-wrapper {
@@ -27,7 +27,7 @@
     overflow: hidden;
     width: 768px;
     max-width: 90%;
-    height: 480px;
+    height: 600px;
     transition: all 0.6s ease;
 }
 
@@ -35,13 +35,14 @@
     font-size: 14px;
     line-height: 20px;
     letter-spacing: .3px;
-    margin: 20px 0;
+    margin: 4px 0;
 }
 
 .auth-container button {
     padding: 10px 45px;
     font-weight: 600;
     letter-spacing: 0.5px;
+    margin: 8px 0;
 }
 
 .auth-container form {
@@ -128,7 +129,7 @@
 
 
 .toggle {
-    background: linear-gradient(to bottom, var(--maroon), var(--plum));
+    background: var(--royal);
     height: 100%;
     color: white;
     position: relative;
@@ -184,7 +185,7 @@
 /* Remember Me */
 
 .form-check-input:checked {
-    background-color: var(--orange);
+    background-color: var(--turquoise);
 }
 
 
@@ -194,7 +195,7 @@
     align-items: center;
     gap: 5px;
     margin-bottom: 8px;
-    color: var(--orange);
+    color: var(--turquoise);
 }
 
 input:hover {
@@ -204,16 +205,70 @@ input:hover {
 }
 
 h1 {
-    color: var(--orange);
+    color: var(--violet);
+    font-size: 1.75rem;
+    margin: 0;
 }
 
 .btn {
-    font-size: .9rem;
+    font-size: 1rem;
+}
+
+.logo {
+    height: 200px;
 }
 
 
 
 
 @media only screen and (max-width: 768px) {
+    .auth-container {
+        border-radius: 50px;
+    }
 
+    .btn {
+        font-size: .8rem;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    .toggle-container {
+        height: 60px;
+        width: 90%;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 25px;
+        transition: none;
+    }
+
+    .auth-container.active .toggle-container {
+        transform: translateX(-50%);
+    }
+    .auth-container form {
+        padding-top: 45px;
+    }
+
+    .sign-in,
+    .sign-up {
+        width: 100%;
+        left: 0;
+    }
+
+    .auth-container.active .sign-in,
+    .auth-container.active .sign-up {
+        transform: translateX(0%);
+    }
+
+    .toggle-panel {
+        flex-direction: row;
+        gap: 8px;
+    }
 }

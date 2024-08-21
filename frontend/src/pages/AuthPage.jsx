@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/auth.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import logo from "../assets/spellbound-logo.png"
+import logo from "../assets/logo.png"
 
 function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
@@ -63,7 +63,7 @@ function AuthPage() {
         e.preventDefault();
         try {
             const response = await axios.post("/api/auth/login", {
-                username: formData.email, // Update this line
+                username: formData.email,
                 password: formData.password,
             }, { withCredentials: true });
             console.log("Login response:", response);
@@ -81,7 +81,7 @@ function AuthPage() {
 
     return (
         <div className="page-wrapper">
-            <div className={`auth-container container-lg primary ${!isLogin ? 'active' : ''}`}>
+            <div className={`auth-container container-lg  ${!isLogin ? 'active' : ''}`}>
                 {/* Sign Up Form */}
                 <div className={`sign-up ${isLogin ? 'hidden' : ''}`}>
                     <form onSubmit={handleSignup}>
@@ -128,7 +128,9 @@ function AuthPage() {
                             value={formData.confirmPassword}
                             onChange={handleInputChange}
                         />
-                        <button className="btn" type="submit">Sign Up</button>
+                        <button className="btn w-100" type="submit">Sign Up</button>
+                        <p>Already have an account?</p>
+                        <button type="button" onClick={toggleForm} className="btn btn-inverted hidden" id="login-button">Login</button>
                     </form>
                 </div>
 
@@ -150,7 +152,9 @@ function AuthPage() {
                             value={formData.password}
                             onChange={handleInputChange}
                         />
-                        <button className="btn" type="submit">Sign In</button>
+                        <button className="btn w-100" type="submit">Sign In</button>
+                        <p>Don&apos;t have an account?</p>
+                        <button type="button" onClick={toggleForm} className="btn btn-inverted hidden" id="signup-button">Create Account</button>
                     </form>
                 </div>
 
@@ -159,19 +163,15 @@ function AuthPage() {
                     <div className="toggle">
                         {/* Toggle Sign In */}
                         <div className="toggle-panel toggle-left">
-                            <h1>Welcome to SpellBound</h1>
-                            <img src={logo} height="200px">
 
-                            </img>
-                            <p>Already have an account?</p>
-                            <button onClick={toggleForm} className="btn hidden" id="login-button">Sign In</button>
+                            <img src={logo} className="logo"></img>
+                            <h1 className="welcome-msg text-light">Welcome to SpellBound</h1>
                         </div>
-
                         {/* Toggle Sign Up */}
                         <div className="toggle-panel toggle-right">
-                            <h1>Welcome back to SpellBound!</h1>
-                            <p>Don&apos;t have an account?</p>
-                            <button onClick={toggleForm} className="btn hidden" id="signup-button">Sign Up</button>
+
+                            <img src={logo} className="logo"></img>
+                            <h1 className="welcome-msg text-light">Welcome back to SpellBound!</h1>
                         </div>
                     </div>
                 </div>

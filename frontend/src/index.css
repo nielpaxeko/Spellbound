@@ -1,14 +1,13 @@
 :root {
-    --maroon: #600704;
-
-    --orange: #B96201;
-    --sand: #f1dcc5;
     --hp-font: "hp";
     --primary-font: 'playfair', sans-serif;
     --secondary-font: 'lato', sans-serif;
-    --navy: #123b69;
-    --pink: #ac3b61;
-    --beige: #edc9b8;
+    --plum: #500153;
+    --pompadour: #660053;
+    --purple: #740378;
+    --violet: #8b0e72;
+    --royal: #a7328c;
+    /* --turquoise: #00e0eb; */
 }
 
 /* Fonts */
@@ -30,13 +29,23 @@
 
 body {
     font-family: var(--primary-font);
-    background: var(--beige);
 }
 
 /* Navbar */
 .navbar {
-    background-color: var(--navy);
+    background: var(--royal);
 }
+
+#main-nav {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
 
 .navbar-brand {
     display: flex;
@@ -45,24 +54,41 @@ body {
     margin: 0;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 8px;
 }
 
 
 /* Footer */
 .btn {
-    background: var(--maroon);
+    background: var(--violet);
     color: white;
-    border: 1px solid var(--maroon);
+    border: 1px solid var(--violet);
     border-radius: 25px;
+
 }
 
 .btn:hover {
     transition: transform 0.4s ease-in-out;
     transform: scale(1.020);
     background-color: white;
-    color: var(--maroon);
-    border: 1px solid var(--maroon);
+    color: var(--violet);
+    border: 1px solid var(--violet);
+}
+
+.btn-inverted {
+    background: white;
+    color: var(--violet);
+    border: 1px solid var(--violet);
+    border-radius: 25px;
+
+}
+
+.btn-inverted:hover {
+    transition: transform 0.4s ease-in-out;
+    transform: scale(1.020);
+    background-color: var(--violet);
+    color: white;
+    border: 1px solid white;
 }
 
 .hp {
@@ -75,4 +101,14 @@ body {
 
 .secondary {
     font-family: var(--secondary-font);
+}
+
+@media only screen and (max-width: 768px) {
+    #main-nav {
+        justify-content: start;
+    }
+
+    .navbar-nav {
+        align-items: start;
+    }
 }
