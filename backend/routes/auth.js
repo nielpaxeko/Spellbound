@@ -47,6 +47,11 @@ router.get('/profile', loggedIn, (req, res) => {
     res.json(req.user);
 });
 
+// Get the current authenticated user's ID
+router.get('/currentUser', loggedIn, (req, res) => {
+    res.json({ user_id: req.user.user_id });
+});
+
 // Logout
 router.post('/logout', (req, res) => {
     req.logout((err) => {

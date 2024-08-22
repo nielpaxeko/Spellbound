@@ -85,7 +85,7 @@ function AuthPage() {
                 {/* Sign Up Form */}
                 <div className={`sign-up ${isLogin ? 'hidden' : ''}`}>
                     <form onSubmit={handleSignup}>
-                        <h1 style={{ color: "#a7328c" }}>Create Account</h1>
+                        <h1 style={{ color: "#921A40" }}>Create Account</h1>
                         <input
                             type="text"
                             name="firstName"
@@ -137,7 +137,7 @@ function AuthPage() {
                 {/* Sign In Form */}
                 <div className={`sign-in ${isLogin ? '' : 'hidden'}`}>
                     <form onSubmit={handleLogin}>
-                        <h1 style={{ color: "#a7328c" }}>Sign In</h1>
+                        <h1 style={{ color: "#921A40" }}>Sign In</h1>
                         <input
                             type="text"
                             name="email"
