@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import logo from "../assets/logo.png";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container } from 'react-bootstrap';
+import axios from 'axios';
 
 function NavigationBar() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userId, setUserId] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         // Fetch authentication status
@@ -14,15 +15,15 @@ function NavigationBar() {
             .then(data => {
                 setIsAuthenticated(data.isAuthenticated);
                 if (data.isAuthenticated) {
-                    // If authenticated, fetch the current user's ID
-                    fetch('/api/auth/currentUser', { credentials: 'include' })
-                        .then(response => response.json())
-                        .then(userData => setUserId(userData.user_id))
-                        .catch(error => console.error('Error fetching user ID:', error));
+                    // If authenticated, fetch the current user's username
+                    axios.get('/api/auth/currentUser', { withCredentials: true })
+                        .then(response => setUser(response.data.username))
+                        .catch(error => console.error('Error fetching current user:', error));
                 }
             })
             .catch(error => console.error('Error fetching auth status:', error));
     }, []);
+
     // Deathenticate user and send to auth screen
     const handleLogout = () => {
         fetch('/api/auth/logout', {
@@ -57,9 +58,11 @@ function NavigationBar() {
                                 <Nav.Link className="nav-link text-light" href="/messages">
                                     <i className="nav-icon bi bi-chat"></i> Messages
                                 </Nav.Link>
-                                <Nav.Link className="nav-link text-light" href={`/profile/${userId}`}>
-                                    <i className="nav-icon bi bi-person-circle"></i> Profile
-                                </Nav.Link>
+                                {user && (
+                                    <Nav.Link className="nav-link text-light" href={`/profile/${user}`}>
+                                        <i className="nav-icon bi bi-person-circle"></i> Profile
+                                    </Nav.Link>
+                                )}
                                 <Nav.Link className="nav-link text-light d-md-none" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                                     Log out
                                 </Nav.Link>

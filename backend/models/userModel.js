@@ -13,7 +13,7 @@ const db = new pg.Client({
     port: process.env.PG_PORT,
 });
 
-db.connect(err => {
+db.connect( err => {
     if (err) {
         console.error('Failed to connect to PostgreSQL:', err);
     } else {
@@ -37,5 +37,16 @@ export const createUser = async (firstName, lastName, username, email, password)
 // Function to find a user by email
 export const findUserByEmail = async (email) => {
     const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+    return result.rows[0];
+};
+
+// Function to find a user by email
+export const findUserById = async (userId) => {
+    const result = await db.query("SELECT * FROM users WHERE user_id = $1", [userId]);
+    return result.rows[0];
+};
+
+export const findUserByUsername = async (username) => {
+    const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
     return result.rows[0];
 };

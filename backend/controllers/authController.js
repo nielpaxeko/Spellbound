@@ -1,4 +1,4 @@
-import { createUser, findUserByEmail } from "../models/userModel.js";
+import { createUser, findUserByEmail, findUserByUsername } from "../models/userModel.js";
 
 // Signup Controller
 export const signup = async (req, res) => {
@@ -60,6 +60,30 @@ export const checkAuthStatus = (req, res) => {
     }
 };
 
+// Get Current User's ID
+export const getCurrentUser = (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({ username: req.user.username });
+       
+    } else {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+};
+
+// Get a specific user's profile by ID
+export const getUserProfile = async (req, res) => {
+    const username = req.params.username;
+    try {
+        const user = await findUserByUsername(username);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error('Error fetching user profile:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
 
 
 

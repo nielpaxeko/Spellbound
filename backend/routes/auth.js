@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, checkAuthStatus } from "../controllers/authController.js";
+import { signup, checkAuthStatus, getCurrentUser, getUserProfile } from "../controllers/authController.js";
 import passport from "passport";
 
 const router = express.Router();
@@ -43,14 +43,11 @@ router.get("/home", loggedIn, (req, res) => {
 // Check Auth Status
 router.get('/status', checkAuthStatus);
 
-router.get('/profile', loggedIn, (req, res) => {
-    res.json(req.user);
-});
+// Get the current authenticated user's
+router.get('/currentUser', loggedIn, getCurrentUser);
 
-// Get the current authenticated user's ID
-router.get('/currentUser', loggedIn, (req, res) => {
-    res.json({ user_id: req.user.user_id });
-});
+// Get a specific user's profile by their username
+router.get('/profile/:username', loggedIn, getUserProfile);
 
 // Logout
 router.post('/logout', (req, res) => {
