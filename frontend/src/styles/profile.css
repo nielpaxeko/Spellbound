@@ -40,3 +40,16 @@
 .card-title {
     margin: 0;
 }
+
+
+
+/* Edit Profile Page CSS */
+
+.edit-profile-container {
+    padding: 50px;
+    width: 80%;
+}
+
+.edit-form {
+    margin-bottom: 10px;
+}

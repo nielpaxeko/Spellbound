@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { Card, Image, Button } from 'react-bootstrap';
@@ -12,6 +12,7 @@ function UserProfile() {
     const [user, setUser] = useState({});
     const [currentUser, setCurrentUser] = useState(null);
     const profilePicture = user.profile_picture || defaultProfilePicture;
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Fetch the current user's username
@@ -28,6 +29,11 @@ function UserProfile() {
     }, [username]);
     // Compare user to current user
     const isCurrentUser = user.username === currentUser;
+
+    // Navigate user to edit profile page
+    const handleEditProfile = () => {
+        navigate(`/profile/${currentUser}/edit`);
+    };
 
     return (
         <div className='profile-wrapper'>
@@ -54,7 +60,7 @@ function UserProfile() {
                 </Card.Body>
                 {isCurrentUser && (  // Only show edit button if viewing own profile
                     <Card.Footer className='profile-footer'>
-                        <Button className='btn-pink'>Edit Profile</Button>
+                        <Button className='btn-pink' onClick={handleEditProfile}>Edit Profile</Button>
                     </Card.Footer>
                 )}
             </Card>

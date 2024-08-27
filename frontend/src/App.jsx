@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage.jsx"
 import Navbar from './components/navbar.jsx';
 import UserProfile from "./pages/UserProfile.jsx"
 import LandingPage from './pages/LandingPage.jsx';
+import EditProfilePage from './pages/EditProfilePage.jsx';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/" element={<AuthPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile/:username" element={<UserProfile />} />
+        <Route path="/profile/:username/edit" element={<EditProfilePage />} /> {/* Edit profile route */}
       </Routes>
     </Router>
   );
