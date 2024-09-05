@@ -1,8 +1,15 @@
+import React from "react";
+import CreatePostPrompt from "./CreatePostPrompt.jsx";
+import '../styles/timeline.css';
 
 function HomePage() {
-    return(
-        <h1>Welcome to Spellbound</h1>
-    )
+    return (
+        <div className="timeline-container container-lg">
+            <div className="timeline-config">
+                <CreatePostPrompt />
+            </div>
+        </div>
+    );
 }
 
-export default HomePage
+export default HomePage;

@@ -12,6 +12,34 @@ CREATE TABLE users (
     profile_picture VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE posts (
+    post_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    likes INT DEFAULT 0,
+    dislikes INT DEFAULT 0,
+    title VARCHAR(255) NOT NULL,
+    content TEXT,
+    media_url VARCHAR(255) DEFAULT NULL
+);
+
+CREATE TABLE comments (
+    comment_id SERIAL PRIMARY KEY,
+    post_id INT REFERENCES posts(post_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    parent_id INT REFERENCES comments(comment_id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE post_likes (
+    like_id SERIAL PRIMARY KEY,
+    post_id INT REFERENCES posts(post_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    liked_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (post_id, user_id)  -- Ensures that a user can only like a post once
+);
 Ï
 -- Examples of INSERT INTO the user tables
 INSERT INTO users (first_name, last_name, username, email, password, role, major, house, school)

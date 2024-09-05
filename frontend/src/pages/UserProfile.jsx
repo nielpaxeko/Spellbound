@@ -13,6 +13,7 @@ function UserProfile() {
     const [currentUser, setCurrentUser] = useState(null);
     const profilePicture = user.profile_picture || defaultProfilePicture;
     const navigate = useNavigate();
+    
 
     useEffect(() => {
         // Fetch the current user's username
