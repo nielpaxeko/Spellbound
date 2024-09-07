@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blink Enterprises</title>
+  <!-- Boostrap/Boostrap Icons and Syles Links -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../styles/blink.css" />
+  <!-- Section padding -->
+  <style>
+    section {
+      padding: 60px 0;
+      min-height: 60vh;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- navbar -->
+  <nav class="navbar navbar-expand-md p-2 navbar-dark">
+    <div class="container-xxl">
+      <!-- navbar brand / title -->
+      <a class="navbar-brand" href="#intro">
+        <img src="../images/blink-logo.webp" class="rounded-pill" alt="brand" width="40" height="40" />
+        <span class="fw-bold">Blink</span>
+      </a>
+      <!-- toggle button for mobile nav -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
+        aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- navbar links -->
+      <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link text-light" href="landing.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#features">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#reviews">Reviews</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#pricing">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="locations.html">FAQ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="locations.html">Locations</a>
+          </li>
+          <li class="nav-item ms-2 d-none d-md-inline">
+            <a class="btn rounded-pill purple-btn" href="/login">Login</a>
+          </li>
+          <li class="nav-item ms-2 d-none d-md-inline">
+            <a class="btn rounded-pill purple-btn" href="/signup">Get started</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- header/hero section -->
+  <section id="header">
+    <div class="container-lg">
+      <div class="row g-4 justify-content-start align-items-center">
+        <div class="col-5 text-right">
+          <h1 class="display-3 header-text">
+            Your Next Adventure is Just a Blink Away!
+          </h1>
+          <button href="" class="btn btn-lg rounded-pill purple-btn">Join Now!</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- features -->
+  <section id="features">
+    <div class="container-lg">
+      <div class="text-center mb-4">
+        <h2 class="section-title">The Blink Experience</h2>
+        <p class="lead section-subtitle">Revolutionizing <span class="bold">Travel</span> one Blink at a time</p>
+      </div>
+      <div class="row d-flex justify-content-center">
+        <div class="col-10 col-lg-6">
+          <div class="feature-title mb-4 ">
+            <h3 class="bold">Adventures and Travels</h3>
+            <p>Explore the world like never before with Blink! Fast, thrilling, and unforgettable experiences await.</p>
+          </div>
+          <!-- Features -->
+          <div class="feats">
+            <div class="feature mb-3">
+              <div class="rounded-4 d-flex justify-content-center align-items-center">
+                <i class="bi bi-globe-americas"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Travel Internationally</h4>
+                <p>Discover new horizons with ease by reaching any of our worldwide locations!</p>
+              </div>
+            </div>
+            <div class="feature mb-3">
+              <div class="rounded-4 d-flex justify-content-center align-items-center">
+                <i class="bi bi-stopwatch"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Speed meets Comfort</h4>
+                <p>Travel faster and smarter with Blink and avoid the hassle of regular travel!</p>
+              </div>
+            </div>
+            <div class="feature mb-3">
+              <div class="rounded-4 d-flex justify-content-center align-items-center">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Safety First</h4>
+                <p>Your peace of mind is our priority. Blink is now officially the safest way to travel!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- reviews -->
+  <section id="reviews">
+    <div class="container">
+      <div class="text-center">
+        <h2 class="section-title">Reviews</h2>
+        <p class="lead section-subtitle">Hear what some of our clients have to say about our services!</p>
+      </div>
+      <!-- Bootstrap Carousel -->
+      <div id="reviewsCarousel" class="carousel slide" data-bs-ride="carousel">
+        <!-- Carousel Indicators -->
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="0" class="active"
+            aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="testimonial">
+              <img src="../images/client1.webp" class="rounded-circle testimonial-pic" alt="Client 1">
+              <div class="testimonial-text">
+                <p>"I work for an international company and my job requires me to travel often . Blink has
+                  revolutionized
+                  the way I travel and has made my life much easier!"
+                </p>
+                <em>-Cecilia Laterano</em>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="testimonial">
+              <img src="../images/client1.webp" class="rounded-circle testimonial-pic" alt="Client 2">
+              <div class="testimonial-text">
+                <p>"Using Blink, I've explored the the 7 wonders of the world without the hassle of jet lag and long
+                  flights. From Italy to
+                  Mexico in seconds! - it's a traveler's dream come true!"</p>
+                <em>-Daniel Verdugo</em>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="testimonial">
+              <img src="../images/client1.webp" class="rounded-circle testimonial-pic" alt="Client 3">
+              <div class="testimonial-text">
+                <p>"Blink is incredible for quick getaways. Need to be in another country in a blink? It's like I was
+                  never even there. Perfect for avoiding... certain situations."</p>
+                <em>-Mike Wazoski</em>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Carousel Buttons -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- pricing -->
+  <section id="pricing" class="bg-light">
+    <div class="container-lg">
+      <div class="text-center">
+        <h2 class="section-title">Monthly Plans</h2>
+        <p class="lead section-subtitle">
+          Please note that your subscription will be charged on a monthly
+          basis.
+        </p>
+      </div>
+      <!-- pricing cards-->
+      <div class="row my-5 align-items-center justify-content-center">
+        <div class="col-9 col-lg-4 my-3">
+          <div class="card text-center">
+            <div class="card-header orange">
+              <span class="text-light lead">Traveler Tier</span>
+            </div>
+            <div class="card-body">
+              <p class="display-4 my-3 fw-bold" style="color: #ffbf00">
+                $249
+              </p>
+              <p class="card-text text-muted d-sm-block">
+                Blink Limit: 10 Blinks per month
+              </p>
+              <p class="card-text text-muted d-lg-block">
+                Max Distance per Blink: 500 miles
+              </p>
+              <p class="card-text text-muted d-lg-block">
+                Blinking only available to public terminals
+              </p>
+              <button href="#" class="btn btn-lg orange-btn rounded-pill">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-9 col-lg-4 my-3">
+          <div class="card text-center">
+            <div class="card-header orange">
+              <span class="text-light lead">Wayfarer Tier </span>
+            </div>
+            <div class="card-body">
+              <p class="display-4 my-3 fw-bold" style="color: #ffbf00">
+                $499
+              </p>
+              <p class="card-text text-muted d-sm-block">
+                Blink Limit: 30 Blinks per month
+              </p>
+              <p class="card-text text-muted d-lg-block">
+                Max Distance per Blink: 3,000 miles
+              </p>
+              <p class="card-text text-muted d-lg-block">
+                Personalized travel planning and services
+              </p>
+              <button href="#" class="btn btn-lg orange-btn rounded-pill">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-9 col-lg-4 my-3">
+          <div class="card text-center">
+            <div class="card-header orange">
+              <span class="text-light lead">Trailblazer Tier</span>
+            </div>
+            <div class="card-body">
+              <p class="display-4 my-3 fw-bold" style="color: #ffbf00">
+                $999
+              </p>
+              <p class="card-text text-muted d-sm-block">
+                Unlimited Blink to any of our locations
+              </p>
+              <p class="card-text text-muted d-lg-block">
+                Priority access to our all of our services
+              </p>
+              <p class="card-text text-muted d-lg-block">
+                Allows user to create 3 private terminals
+              </p>
+              <button href="#" class="btn btn-lg orange-btn rounded-pill">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="text-center">
+        <p class="lead text-muted">
+          Please ensure your payment information is up to date to avoid any
+          interruptions of our services. You can manage your subscription
+          and billing details through your Blink account's dashboards.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- accordion for faq -->
+  <section id="faq">
+    <div class="container-lg ">
+      <div class="text-center">
+        <h2 class="section-title">FAQ'S</h2>
+        <p class="lead section-subtitle">Want to Know More? Discover How Blink Works!</p>
+      </div>
+      <div class="accordion my-5" id="chapters">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-1">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chapter-1"
+              aria-expanded="true" aria-controls="chapter-1">
+              How does the Blink teleportation process work?
+            </button>
+          </h2>
+          <div id="chapter-1" class="accordion-collapse collapse show" aria-labelledby="heading-1"
+            data-bs-parent="#chapters">
+            <div class="accordion-body">
+              <p>Once you have a membership with Blink Enterprises you'll first need to head towards one of our
+                terminals. From there, you'll be able to select a location from the various other terminals around the
+                world as long as they are in range of your membership plan. You'll then be teleported to your chosen
+                location in the blink of an eye!</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#chapter-2" aria-expanded="false" aria-controls="chapter-2">
+              Where are Blink terminals located and where can I travel?
+            </button>
+          </h2>
+          <div id="chapter-2" class="accordion-collapse collapse" aria-labelledby="heading-2"
+            data-bs-parent="#chapters">
+            <div class="accordion-body">
+              <p>Blink's public terminals are strategically located in major cities worldwide to ensure maximum
+                accessibility. You can find our terminals in cities such as New York, London, Tokyo, Paris, Sydney, and
+                many more. For a complete list of locations, please visit the "Locations" section on our website.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#chapter-3" aria-expanded="false" aria-controls="chapter-1">
+              What do I need to bring to the Blink terminal?
+            </button>
+          </h2>
+          <div id="chapter-3" class="accordion-collapse collapse" aria-labelledby="heading-3"
+            data-bs-parent="#chapters">
+            <div class="accordion-body">
+              <p>When you visit a Blink terminal, you'll need to bring a valid form of identification and your Blink
+                membership card. Ensure your membership details are up to date in your Blink account. For international
+                travel, please bring any required travel permits.</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-4">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#chapter-4" aria-expanded="false" aria-controls="chapter-4">
+              How many people can Blink at once?
+            </button>
+          </h2>
+          <div id="chapter-4" class="accordion-collapse collapse" aria-labelledby="heading-4"
+            data-bs-parent="#chapters">
+            <div class="accordion-body">
+              <p>All of our locations have several blink stations. Up to 10 people can enter a station at a time. Note
+                that all people that enter the same station will be sent to the same location. </p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#chapter-5" aria-expanded="false" aria-controls="chapter-5">
+              Can I change my destination after stepping into the Blink station?
+            </button>
+          </h2>
+          <div id="chapter-5" class="accordion-collapse collapse" aria-labelledby="heading-5"
+            data-bs-parent="#chapters">
+            <div class="accordion-body">
+              <p>Once you have confirmed your destination at the terminal, changes can only be made before you step into
+                the teleport machine. If you need to change your destination, please inform the staff
+                immediately. Note that changes may result in a short delay while we reconfigure your teleportation
+                details.</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-6">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#chapter-6" aria-expanded="false" aria-controls="chapter-6">
+              What can I bring with me?
+            </button>
+          </h2>
+          <div id="chapter-6" class="accordion-collapse collapse" aria-labelledby="heading-5"
+            data-bs-parent="#chapters">
+            <div class="accordion-body">
+              <p>You are allowed to bring one carry-on item per passenger when using our Blink terminals. Ensure that
+                your carry-on complies with our size and weight restrictions, which can be found in your Blink account
+                details. Please note that illegal items, hazardous materials, and any substances prohibited by local or
+                international law are strictly forbidden. Additional fees apply for extra items or oversized luggage.
+                Always check the specific regulations for your destination before traveling.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+  <!-- footer -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

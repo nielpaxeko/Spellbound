@@ -44,7 +44,7 @@ function NavigationBar() {
             <Container fluid className="container-xxl">
                 <Navbar.Brand href={isAuthenticated ? "/home" : "/landing"} className="navbar-brand">
                     <img src={logo} alt="brand" width="40" height="40" />
-                    <span className="fw-bold text-light">SpellBound</span>
+                    <span className="fw-bold text-light">Rover</span>
                 </Navbar.Brand>
                 <Navbar.Toggle className="navbar-toggler" aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">

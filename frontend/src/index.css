@@ -6,6 +6,8 @@
     --pink: #C75B7A;
     --kiss: #D9ABAB;
     --sand: #F4D9D0;
+    --purple: #800059;
+    --orange: #FF960B;
 }
 
 /* Fonts */
@@ -28,6 +30,11 @@
 body {
     font-family: var(--primary-font);
     background-color: var(--sand);
+}
+
+section {
+    padding: 60px 0;
+    min-height: 60vh;
 }
 
 /* Navbar */
@@ -68,7 +75,7 @@ body {
 }
 
 .nav-link:hover {
-    color: #C75B7A;
+    color: var(--pink);
 }
 
 /* Footer */
