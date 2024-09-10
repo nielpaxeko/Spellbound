@@ -1,39 +1,48 @@
-import "../styles/landing.css"
+import "../styles/landing.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import { Carousel } from 'react-bootstrap';
-import globe from "../assets/globe.gif"
+import { Carousel, Accordion, Button, Container, Row, Col, Image, Card } from 'react-bootstrap';
+import globe from "../assets/globe.gif";
+import client1 from "../assets/client1.jpeg";
+import client2 from "../assets/client2.jpg";
+import client3 from "../assets/client3.jpg";
+import mexico_banner from "../assets/mexico-banner.png";
+import france_banner from "../assets/france-banner.jpeg";
+import japan_banner from "../assets/japan-banner.jpeg";
 
 function LandingPage() {
     return (
         <div>
-            {/*  hero section */}
+            {/* Hero Section */}
             <section id="header">
-                <div className="container-lg">
-                    <div className="row g-4 justify-content-start align-items-center">
-                        <div className="col-5 text-right">
+                <Container fluid="lg">
+                    <Row className="g-4 justify-content-start align-items-center">
+                        <Col xs={12} md={5} className="text-right">
                             <h1 className="display-3 header-text">
                                 Share your travel experiences with Rover!
                             </h1>
-                            <button href="" className="btn btn-lg rounded-pill purple-btn">Join Now!</button>
-                        </div>
-                    </div>
-                </div>
+                            <Button href="/auth" size="lg" className="rounded-pill purple-btn">
+                                Join Now!
+                            </Button>
+                        </Col>
+                    </Row>
+                </Container>
             </section>
 
-            {/* features */}
+            {/* Features Section */}
             <section id="features">
-                <div className="container-lg">
-                    <div className="text-center mb-4">
+                <Container fluid="lg" className="mb-4">
+                    <div className="text-center">
                         <h2 className="section-title">The Rover Experience</h2>
                         <p className="lead section-subtitle">Revolutionizing <span className="bold">Travel</span> one step at a time</p>
                     </div>
-                    <div className="row d-flex justify-content-center">
-                        <div className="col-10 col-lg-6">
-                            <div className="feature-title mb-4 ">
+                    <Row className="d-flex justify-content-center">
+                        <Col xs={12} lg={6}>
+                            <div className="feature-title">
                                 <h3 className="bold">Explore. Plan. Connect.</h3>
-                                <p>Join Rover today and start mapping your adventures. Connect with travelers, share your stories, and show the world where you&apos;ve been!</p>
+                                <p>Join Rover today and start mapping your adventures. Connect with travelers, share your stories, and show the world where you've been!</p>
                             </div>
-                            {/* features */}
+
+                            {/* Features */}
                             <div className="feats">
                                 <div className="feature mb-3">
                                     <div className="rounded-4 d-flex justify-content-center align-items-center">
@@ -41,7 +50,7 @@ function LandingPage() {
                                     </div>
                                     <div className="feature-text">
                                         <h4>Map Your Adventures!</h4>
-                                        <p>Showcase your adventures with your own personalized globe!</p>
+                                        <p>Show your adventures to your friends!</p>
                                     </div>
                                 </div>
                                 <div className="feature mb-3">
@@ -59,242 +68,172 @@ function LandingPage() {
                                     </div>
                                     <div className="feature-text">
                                         <h4>Interact with fellow travelers!</h4>
-                                        <p>Rover is a safespace for travelers from all backgrounds!</p>
+                                        <p>Rover is a safe space for travelers from all backgrounds!</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="col-10 col-lg-6 featured-globe">
-                            <img src={globe} className="text-center"/>
-                        </div>
-                    </div>
-                </div>
+                        </Col>
+                        <Col xs={12} lg={6} className="featured-globe">
+                            <Image src={globe} fluid />
+                        </Col>
+                    </Row>
+                </Container>
             </section>
 
-            {/* reviews */}
+            {/* Reviews Section */}
             <section id="reviews">
-                <div className="container">
+                <Container>
                     <div className="text-center">
-                        <h2 className="section-title">Reviews</h2>
+                        <h2 className="section-title" style={{ color: "#FF960B" }}>Reviews</h2>
                         <p className="lead section-subtitle">Hear what some of our clients have to say about our services!</p>
                     </div>
-                    {/* bootstrap carousel */}
-                    <div id="reviewsCarousel" className="carousel slide" data-bs-ride="carousel">
-                        {/* carousel indicators */}
-                        <div className="carousel-indicators">
-                            <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="0" className="active"
-                                aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                        </div>
-
-                        <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <div className="testimonial">
-                                    <img src="../images/client1.webp" className="rounded-circle testimonial-pic" alt="Client 1" />
-                                    <div className="testimonial-text">
-                                        <p></p>
-                                        <em>-Cecilia Laterano</em>
-                                    </div>
+                    {/* Carousel */}
+                    <Carousel>
+                        <Carousel.Item>
+                            <div className="testimonial">
+                                <Image src={client1} roundedCircle className="testimonial-pic" alt="Client 1" />
+                                <div className="testimonial-text">
+                                    <p>"After visiting every country, I can confidently say that Rover is an incredible platform for both new and seasoned travelers."</p>
+                                    <em>-Drew Binsky</em>
                                 </div>
                             </div>
-                            <div className="carousel-item">
-                                <div className="testimonial">
-                                    <img src="../images/client1.webp" className="rounded-circle testimonial-pic" alt="Client 2" />
-                                    <div className="testimonial-text">
-                                        <p>njsncac</p>
-                                        <em>-Daniel Verdugo</em>
-                                    </div>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <div className="testimonial">
+                                <Image src={client2} roundedCircle className="testimonial-pic" alt="Client 2" />
+                                <div className="testimonial-text">
+                                    <p>"As someone who's just getting started with traveling, Rover has been a game-changer for me! The itinerary creation feature made it so easy for me to plan my first trip to Europe."</p>
+                                    <em>-Cecilia Laterano</em>
                                 </div>
                             </div>
-                            <div className="carousel-item">
-                                <div className="testimonial">
-                                    <img src="../images/client1.webp" className="rounded-circle testimonial-pic" alt="Client 3" />
-                                    <div className="testimonial-text">
-                                        <p></p>
-                                        <em>-Mike Wazoski</em>
-                                    </div>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <div className="testimonial">
+                                <Image src={client3} roundedCircle className="testimonial-pic" alt="Client 3" />
+                                <div className="testimonial-text">
+                                    <p>"I've been to over 40 countries and have used several apps to document my travels, but nothing compares to Rover. It's like a digital passport!"</p>
+                                    <em>-Alejandro Verdugo</em>
                                 </div>
                             </div>
-                        </div>
-                        {/*  carousel button */}
-                        <button className="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev">
-                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Previous</span>
-                        </button>
-                        <button className="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next">
-                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Next</span>
-                        </button>
-                    </div>
-                </div>
+                        </Carousel.Item>
+                    </Carousel>
+                </Container>
             </section>
 
-            {/* pricing */}
-            <section id="pricing" className="bg-light">
-                <div className="container-lg">
+            {/* guides */}
+            <section id="travel-guides" className="bg-light">
+                <Container fluid="lg">
                     <div className="text-center">
-                        <h2 className="section-title">Monthly Plans</h2>
+                        <h2 className="section-title">Travel Guide</h2>
                         <p className="lead section-subtitle">
-                            Please note that your subscription will be charged on a monthly
-                            basis.
+                            Plan your next adventure with our professional and amateur travel guides!
                         </p>
                     </div>
-                    {/* pricing cards */}
-                    <div className="row my-5 align-items-center justify-content-center">
-                        <div className="col-9 col-lg-4 my-3">
-                            <div className="card text-center">
-                                <div className="card-header orange">
-                                    <span className="text-light lead">Traveler Tier</span>
-                                </div>
-                                <div className="card-body">
-                                    <p className="display-4 my-3 fw-bold">
-                                        $0
-                                    </p>
-                                    <p className="card-text text-muted d-sm-block">
-                                        Create and Share Posts with other users.
-                                    </p>
-                                    <p className="card-text text-muted d-lg-block">
-                                        Unlimited messaging.
-                                    </p>
-                                    <p className="card-text text-muted d-lg-block">
-                                        Access to the globescratcher feature.
-                                    </p>
-                                    <button href="#" className="btn btn-lg orange-btn rounded-pill">
-                                        Subscribe
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-9 col-lg-4 my-3">
-                            <div className="card text-center">
-                                <div className="card-header orange">
-                                    <span className="text-light lead">Wayfarer Tier </span>
-                                </div>
-                                <div className="card-body">
-                                    <p className="display-4 my-3 fw-bold">
-                                        $2
-                                    </p>
-                                    <p className="card-text text-muted d-sm-block">
-                                        No Ads!
-                                    </p>
-                                    <p className="card-text text-muted d-lg-block">
 
-                                    </p>
-                                    <p className="card-text text-muted d-lg-block">
-                                        Personalized travel planning and services
-                                    </p>
-                                    <button href="#" className="btn btn-lg orange-btn rounded-pill">
-                                        Subscribe
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-9 col-lg-4 my-3">
-                            <div className="card text-center">
-                                <div className="card-header orange">
-                                    <span className="text-light lead">Trailblazer Tier</span>
-                                </div>
-                                <div className="card-body">
-                                    <p className="display-4 my-3 fw-bold">
-                                        $5
-                                    </p>
-                                    <p className="card-text text-muted d-sm-block">
-                                        Unlimited Blink to any of our locations
-                                    </p>
-                                    <p className="card-text text-muted d-lg-block">
-                                        Priority access to our all of our services
-                                    </p>
-                                    <p className="card-text text-muted d-lg-block">
-                                        Allows user to create 3 private terminals
-                                    </p>
-                                    <button href="#" className="btn btn-lg orange-btn rounded-pill">
-                                        Subscribe
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div className="text-center">
-                        <p className="lead text-muted">
-                            Please ensure your payment information is up to date to avoid any
-                            interruptions of our services. You can manage your subscription
-                            and billing details through your Blinkdashboards.
-                        </p>
-                    </div>
-                </div>
+                    {/* Guide Cards */}
+                    <Row className="my-5 align-items-center justify-content-center">
+                        <Col xs={12} lg={4} className="my-3">
+                            <Card className="card-guide text-center">
+                                <Card.Header className="guide-header">
+                                    <div
+                                        className="card-header-image"
+                                        style={{
+                                            backgroundImage: `url(${mexico_banner})`,
+                                        }}
+                                    ></div>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Text>
+                                        Explore the vibrant culture, stunning beaches, and hidden gems of Mexico. Whether you want to discover ancient ruins or enjoy delicious cuisine, this guide has it all.
+                                    </Card.Text>
+                                    <Button href="/guides/mexico" variant="primary">Explore Mexico</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col xs={12} lg={4} className="my-3">
+                            <Card className="card-guide text-center">
+                                <Card.Header className="guide-header">
+                                    <div
+                                        className="card-header-image"
+                                        style={{
+                                            backgroundImage: `url(${france_banner})`,
+                                        }}
+                                    ></div>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Text>
+                                        Discover the romance, history, and culinary delights of France. From the streets of Paris to the beaches of the French Riviera, start your French adventure with our essential guide.
+                                    </Card.Text>
+                                    <Button href="/guides/france" variant="primary">Explore France</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col xs={12} lg={4} className="my-3">
+                            <Card className="card-guide text-center">
+                                <Card.Header className="guide-header">
+                                    <div
+                                        className="card-header-image"
+                                        style={{
+                                            backgroundImage: `url(${japan_banner})`,
+                                        }}
+                                    ></div>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Text>
+                                        Experience the rich traditions and cutting-edge modernity of Japan. From the serene temples to bustling Tokyo streets, this guide has everything you need.
+                                    </Card.Text>
+                                    <Button href="/guides/japan" variant="primary">Explore Japan</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
             </section>
 
-            {/* accordion */}
+            {/* FAQ Section */}
             <section id="faq">
-                <div className="container-lg ">
+                <Container fluid="lg">
                     <div className="text-center">
                         <h2 className="section-title">FAQ</h2>
                         <p className="lead section-subtitle">Want to Know More?</p>
                     </div>
-                    <div className="accordion my-5" id="chapters">
-                        <div className="accordion-item">
-                            <h2 className="accordion-header" id="heading-1">
-                                <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chapter-1"
-                                    aria-expanded="true" aria-controls="chapter-1">
-                                    What makes Rover different from other social media platforms?
-                                </button>
-                            </h2>
-                            <div id="chapter-1" className="accordion-collapse collapse show" aria-labelledby="heading-1"
-                                data-bs-parent="#chapters">
-                                <div className="accordion-body">
-                                    <p>Rover is designed specifically for travelers! In addition to classic social media features like posting updates and messaging, each user has an interactive globe on their profile where they can highlight the countries they have visited, making it a fun and personalized way to showcase your travels!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="accordion-item">
-                            <h2 className="accordion-header" id="heading-2">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#chapter-2" aria-expanded="false" aria-controls="chapter-2">
-                                    Is Rover free to use?
-                                </button>
-                            </h2>
-                            <div id="chapter-2" className="accordion-collapse collapse" aria-labelledby="heading-2"
-                                data-bs-parent="#chapters">
-                                <div className="accordion-body">
-                                    <p>Yes, Rover is completely free to join and use!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="accordion-item">
-                            <h2 className="accordion-header" id="heading-3">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#chapter-3" aria-expanded="false" aria-controls="chapter-1">
-                                    What languages is Rover available in?
-                                </button>
-                            </h2>
-                            <div id="chapter-3" className="accordion-collapse collapse" aria-labelledby="heading-3"
-                                data-bs-parent="#chapters">
-                                <div className="accordion-body">
-                                    <p>Currently, Rover is only available in English, Spanish, French, Japanese and Italian. But we plan to support for more languages like german, chinese, portuguese and korean in the future so that travelers all over the world can share their stories.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="accordion-item">
-                            <h2 className="accordion-header" id="heading-4">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#chapter-4" aria-expanded="false" aria-controls="chapter-4">
-                                    How do I connect with other travelers?
-                                </button>
-                            </h2>
-                            <div id="chapter-4" className="accordion-collapse collapse" aria-labelledby="heading-4"
-                                data-bs-parent="#chapters">
-                                <div className="accordion-body">
-                                    <p> Search for users, join groups, or participate in discussions to connect with fellow adventurers.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                    {/* Accordion */}
+                    <Accordion defaultActiveKey="0" className="my-5">
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header className="faq-header">What makes Rover different from other social media platforms?</Accordion.Header>
+                            <Accordion.Body>
+                                Rover is designed specifically for travelers! Each user has an interactive globe on their profile where they can highlight the countries they have visited, making it a fun and personalized way to showcase your travels!
+                            </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="1">
+                            <Accordion.Header>Is Rover free to use?</Accordion.Header>
+                            <Accordion.Body>Yes, Rover is completely free to join and use!</Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="2">
+                            <Accordion.Header>What languages is Rover available in?</Accordion.Header>
+                            <Accordion.Body>
+                                Currently, Rover is available in English, Spanish, French, Japanese, and Italian. We plan to add more languages in the future to cater to travelers all over the world!
+                            </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="3">
+                            <Accordion.Header>How do I connect with other travelers?</Accordion.Header>
+                            <Accordion.Body>
+                                Search for users, join groups, or participate in discussions to connect with fellow adventurers.
+                            </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="4">
+                            <Accordion.Header>Can I create my own travel guides?</Accordion.Header>
+                            <Accordion.Body>
+                                Not directly, but our travel guides are made through the recommendations of both our own experiences and those of our user's.
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+                </Container>
             </section>
         </div>
-    )
+    );
 }
 
-export default LandingPage
+export default LandingPage;
+

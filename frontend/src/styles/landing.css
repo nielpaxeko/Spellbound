@@ -76,7 +76,7 @@
 .feature-text p {
   color: var(--orange);
   margin: 0;
-  font-size: .9rem;
+  font-size: 1rem;
 }
 
 .bold {
@@ -92,6 +92,7 @@ i {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   height: 500px;
 }
 
@@ -114,18 +115,17 @@ i {
 }
 
 .testimonial-pic {
-  height: 200px;
+  height: 60%;
   margin: 10px, 20px;
-  border: 3px solid var(--berry);
-
+  border-radius: 50%;
+  border: 3px solid var(--orange);
 }
-
 .testimonial-text {
   display: flex;
   align-items: start;
   justify-content: center;
   color: white;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   flex-direction: column;
   padding: 5px;
   margin: 5px;
@@ -168,6 +168,32 @@ nav {
   justify-content: center;
   align-items: center;
 }
+/* Guides */
+.card-guide {
+  height: 350px;
+}
+
+.guide-header {
+  padding: 0;
+  overflow: hidden;
+}
+.card-header-image {
+  height: 150px;
+  background-size: cover;
+  background-position: cover;
+}
+
+
+/* FAQ */
+.accordion-button {
+  color: var(--orange) !important;
+  background-color: var(--berry) !important;
+}
+
+.accordion-button:focus {
+  color: var(--berry) !important;
+  background-color: var(--orange) !important;
+}
 
 /* Just colors */
 .berry {
@@ -197,5 +223,8 @@ nav {
     width: 75%;
     margin: auto;
     font-size: 1.25rem;
+  }
+  .card {
+    height: 325px;
   }
 }

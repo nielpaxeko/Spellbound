@@ -30,6 +30,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
       'no-unused-vars': 'off',
+      "react/no-unescaped-entities": "off",
       'no-undef': 'off',
       'react-refresh/only-export-components': [
         'warn',
