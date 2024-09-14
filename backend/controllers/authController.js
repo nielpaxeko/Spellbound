@@ -2,7 +2,7 @@ import { createUser, findUserByEmail, findUserByUsername } from "../models/userM
 
 // Signup Controller
 export const signup = async (req, res) => {
-    const { firstName, lastName, username, email, password, confirmPassword } = req.body;
+    const { firstName, lastName, username, country_of_origin, email, password, confirmPassword } = req.body;
 
     // Basic password validation
     if (password !== confirmPassword) {
@@ -24,7 +24,7 @@ export const signup = async (req, res) => {
         }
 
         // Create a new user
-        const user = await createUser(firstName, lastName, username, email, password);
+        const user = await createUser(firstName, lastName, username, email, password, country_of_origin);
         req.login(user, (err) => {
             if (err) {
                 console.error("Login error:", err);

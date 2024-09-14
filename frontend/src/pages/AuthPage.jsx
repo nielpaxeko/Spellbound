@@ -13,6 +13,7 @@ function AuthPage() {
         lastName: "",
         username: "",
         email: "",
+        country_of_origin: "",
         password: "",
         confirmPassword: "",
     });
@@ -25,6 +26,7 @@ function AuthPage() {
             lastName: "",
             username: "",
             email: "",
+            country_of_origin: "",
             password: "",
             confirmPassword: "",
         });
@@ -48,6 +50,7 @@ function AuthPage() {
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
+                country_of_origin: formData.country_of_origin,
                 confirmPassword: formData.confirmPassword,
             });
             alert("Sign up successful!");
@@ -165,13 +168,13 @@ function AuthPage() {
                         <div className="toggle-panel toggle-left">
 
                             <img src={logo} className="logo"></img>
-                            <h1 className="welcome-msg title text-light">Welcome to SpellBound</h1>
+                            <h1 className="welcome-msg title text-light">Welcome to Rover!</h1>
                         </div>
                         {/* Toggle Sign Up */}
                         <div className="toggle-panel toggle-right">
 
                             <img src={logo} className="logo"></img>
-                            <h1 className="welcome-msg title text-light">Welcome back to SpellBound!</h1>
+                            <h1 className="welcome-msg title text-light">Welcome back to Rover!</h1>
                         </div>
                     </div>
                 </div>

@@ -51,7 +51,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.rounded-4 {
+.rounded-feature {
   background-color: var(--berry);
   min-width: 75px;
   height: 75px;
@@ -224,7 +224,7 @@ nav {
     margin: auto;
     font-size: 1.25rem;
   }
-  .card {
+  .card-guide {
     height: 325px;
   }
 }

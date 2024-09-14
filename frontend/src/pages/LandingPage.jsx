@@ -45,7 +45,7 @@ function LandingPage() {
                             {/* Features */}
                             <div className="feats">
                                 <div className="feature mb-3">
-                                    <div className="rounded-4 d-flex justify-content-center align-items-center">
+                                    <div className="rounded-4 rounded-feature d-flex justify-content-center align-items-center">
                                         <i className="bi bi-globe-americas"></i>
                                     </div>
                                     <div className="feature-text">
@@ -54,7 +54,7 @@ function LandingPage() {
                                     </div>
                                 </div>
                                 <div className="feature mb-3">
-                                    <div className="rounded-4 d-flex justify-content-center align-items-center">
+                                    <div className="rounded-4 rounded-feature d-flex justify-content-center align-items-center">
                                         <i className="bi bi-calendar2-week"></i>
                                     </div>
                                     <div className="feature-text">
@@ -63,7 +63,7 @@ function LandingPage() {
                                     </div>
                                 </div>
                                 <div className="feature mb-3">
-                                    <div className="rounded-4 d-flex justify-content-center align-items-center">
+                                    <div className="rounded-4 rounded-feature d-flex justify-content-center align-items-center">
                                         <i className="bi bi-chat-dots"></i>
                                     </div>
                                     <div className="feature-text">

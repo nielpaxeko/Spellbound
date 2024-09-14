@@ -44,7 +44,6 @@ function UserProfile() {
                     <Card.Title className='text-light'>{user.username}</Card.Title>
                     {user.bio && <Card.Text>Bio: {user.bio}</Card.Text>}
                     {!isCurrentUser && (
-                        // Only show follow and message buttons if viewing another user's profile
                         <div className='profile-btns'>
                             <Button className='btn btn-pink'>Follow</Button>
                             <Button className='btn btn-kiss'>Message</Button>
@@ -54,10 +53,7 @@ function UserProfile() {
                 <Card.Body>
                     <Card.Text>Name: {user.first_name} {user.last_name}</Card.Text>
                     <Card.Text>Email: {user.email}</Card.Text>
-                    <Card.Text>Role: {user.role}</Card.Text>
-                    {user.major && <Card.Text>Major: {user.major}</Card.Text>}
-                    {user.school && <Card.Text>School: {user.school}</Card.Text>}
-                    {user.house && <Card.Text>House: {user.house}</Card.Text>}
+                    {user.country_of_origin && <Card.Text>Country: {user.country_of_origin}</Card.Text>}
                 </Card.Body>
                 {isCurrentUser && (  // Only show edit button if viewing own profile
                     <Card.Footer className='profile-footer'>

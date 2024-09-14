@@ -22,14 +22,14 @@ db.connect(err => {
 });
 
 // Function to create a new user
-export const createUser = async (firstName, lastName, username, email, password) => {
+export const createUser = async (firstName, lastName, username, email, password, country_of_origin) => {
     const hashedPassword = await hashPassword(password);
     const query = `
-        INSERT INTO users (first_name, last_name, username, email, password, role)
-        VALUES ($1, $2, $3, $4, $5, 'student')
+        INSERT INTO users (first_name, last_name, username, email, password, country_of_origin)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
     `;
-    const values = [firstName, lastName, username, email, hashedPassword];
+    const values = [firstName, lastName, username, email, hashedPassword, country_of_origin];
     const result = await db.query(query, values);
     return result.rows[0]; // Return the new user
 };
@@ -68,7 +68,7 @@ export const verifyPassword = async (username, currentPassword) => {
 
 // Function to update user profile
 export const updateUserProfile = async (username, updates) => {
-    const { first_name, last_name, email, password, role, major, house, school, bio, currentPassword } = updates;
+    const { first_name, last_name, email, password, country_of_origin, currentPassword } = updates;
 
     try {
         // Verify current password
@@ -98,25 +98,9 @@ export const updateUserProfile = async (username, updates) => {
             updateFields.push(`password = $${index++}`);
             values.push(hashedPassword);
         }
-        if (role) {
-            updateFields.push(`role = $${index++}`);
+        if (country_of_origin) {
+            updateFields.push(`country_of_origin = $${index++}`);
             values.push(role);
-        }
-        if (major) {
-            updateFields.push(`major = $${index++}`);
-            values.push(major);
-        }
-        if (house) {
-            updateFields.push(`house = $${index++}`);
-            values.push(house);
-        }
-        if (school) {
-            updateFields.push(`school = $${index++}`);
-            values.push(school);
-        }
-        if (bio) {
-            updateFields.push(`bio = $${index++}`);
-            values.push(bio);
         }
 
         // Ensure the username is the last param
