@@ -42,7 +42,7 @@ function UserProfile() {
                 <Card.Header className='profile-header'>
                     <Image src={profilePicture} roundedCircle className="profile-picture img-thumbnail" />
                     <Card.Title className='text-light'>{user.username}</Card.Title>
-                    {user.bio && <Card.Text>Bio: {user.bio}</Card.Text>}
+                    {user.bio && <Card.Text className='text-light'>{user.bio}</Card.Text>}
                     {!isCurrentUser && (
                         <div className='profile-btns'>
                             <Button className='btn btn-pink'>Follow</Button>

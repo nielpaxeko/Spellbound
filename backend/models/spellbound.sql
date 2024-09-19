@@ -6,6 +6,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     profile_picture VARCHAR(255),
+    bio TEXT,
 	country_of_origin VARCHAR(100),
     created_at TIMESTAMPTZ DEFAULT NOW(),
 );

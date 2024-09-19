@@ -65,7 +65,7 @@ router.post('/logout', (req, res) => {
 // Update user profile
 router.put('/profile/:username', async (req, res) => {
     const { username } = req.params;
-    const updates = req.body; // Get all the fields from the request body
+    const updates = req.body;
 
     try {
         const result = await updateUserProfile(username, updates);

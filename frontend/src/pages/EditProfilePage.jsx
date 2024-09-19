@@ -7,24 +7,19 @@ import '../styles/profile.css';
 
 function EditProfilePage() {
     const [user, setUser] = useState({
-        profile_picture: '',
         first_name: '',
         last_name: '',
         username: '',
         email: '',
         password: '',
-        role: 'student',
         bio: '',
-        school: '',
-        house: '',
-        major: '',
+        country_of_origin: '',
     });
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [role, setRole] = useState('student');
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
 
@@ -48,6 +43,10 @@ function EditProfilePage() {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        setProfilePicture(e.target.files[0]);
+    };
+
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -55,20 +54,25 @@ function EditProfilePage() {
         setError('');
 
         const userConfirmation = window.prompt('Please enter your current password to confirm changes:');
-        if (userConfirmation === null) return; // User cancelled
+        if (userConfirmation === null) return;
 
         try {
-            const response = await axios.put('/api/auth/profile/' + user.username, {
-                firstName: user.first_name,
-                lastName: user.last_name,
+            // Send the PUT request to update the profile
+            const response = await axios.put(`/api/auth/profile/${user.username}`, {
+
+                first_name: user.first_name,
+                last_name: user.last_name,
                 email: user.email,
                 password: newPassword,
-                role: user.role,
-                currentPassword: userConfirmation
+                bio: user.bio,
+                country_of_origin: user.country_of_origin,
+                currentPassword: userConfirmation,
+                newUsername: user.username // Send new username if it's changed
             }, { withCredentials: true });
 
             setMessage(response.data.message);
             console.log('Profile updated successfully:', response.data);
+            // Optionally redirect or reload page
         } catch (err) {
             setError(err.response?.data?.message || 'Error updating profile');
             console.error('Error updating profile:', err);
@@ -84,8 +88,19 @@ function EditProfilePage() {
         <Container className="edit-profile-container">
             <h2>Edit Profile For User: {user.username}</h2>
             {error && <Alert variant="danger">{error}</Alert>}
+            {message && <Alert variant="success">{message}</Alert>}
             <Form className='mt-4' onSubmit={handleSubmit}>
-                <Form.Group className="edit-form">
+{/* 
+                <Form.Group className="edit-form" controlId="formProfilePicture">
+                    <Form.Label>Profile Picture</Form.Label>
+                    <Form.Control
+                        type="file"
+                        name="profile_picture"
+                        onChange={handleFileChange}
+                    />
+                </Form.Group> */}
+
+                <Form.Group className="edit-form" controlId="formFirstName">
                     <Form.Label>First Name</Form.Label>
                     <Form.Control
                         type="text"
@@ -96,7 +111,7 @@ function EditProfilePage() {
                     />
                 </Form.Group>
 
-                <Form.Group className="edit-form">
+                <Form.Group className="edit-form" controlId="formLastName">
                     <Form.Label>Last Name</Form.Label>
                     <Form.Control
                         type="text"
@@ -107,7 +122,7 @@ function EditProfilePage() {
                     />
                 </Form.Group>
 
-                <Form.Group className="edit-form">
+                <Form.Group className="edit-form" controlId="formUsername">
                     <Form.Label>Username</Form.Label>
                     <Form.Control
                         type="text"
@@ -118,7 +133,7 @@ function EditProfilePage() {
                     />
                 </Form.Group>
 
-                <Form.Group className="edit-form">
+                <Form.Group className="edit-form" controlId="formEmail">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         type="email"
@@ -139,7 +154,7 @@ function EditProfilePage() {
                     />
                 </Form.Group>
 
-                <Form.Group className="edit-form">
+                <Form.Group className="edit-form" controlId="formBio">
                     <Form.Label>Bio</Form.Label>
                     <Form.Control
                         as="textarea"
@@ -149,46 +164,15 @@ function EditProfilePage() {
                     />
                 </Form.Group>
 
-                <Form.Group className="edit-form">
-                    <Form.Label>Major</Form.Label>
+                <Form.Group className="edit-form" controlId="formCountry">
+                    <Form.Label>Country</Form.Label>
                     <Form.Control
                         type="text"
-                        name="major"
-                        value={user.major || ""}
+                        name="country_of_origin"
+                        value={user.country_of_origin || ""}
                         onChange={handleChange}
                     />
                 </Form.Group>
-
-                <Form.Group className="edit-form">
-                    <Form.Label>School</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="school"
-                        value={user.school || ""}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group className="edit-form">
-                    <Form.Label>House</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="house"
-                        value={user.house || ""}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group className="edit-form" controlId="formRole">
-                    <Form.Label>Role</Form.Label>
-                    <Form.Control as="select" value={role} onChange={(e) => setRole(e.target.value)}>
-                        <option value="student">Student</option>
-                        <option value="professor">Professor</option>
-                        <option value="administrator">Administrator</option>
-                    </Form.Control>
-                </Form.Group>
-
-
 
                 <Button type="submit">
                     Save Changes

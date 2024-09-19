@@ -54,12 +54,15 @@ export const findUserByUsername = async (username) => {
 // Function to verify password
 export const verifyPassword = async (username, currentPassword) => {
     try {
+        // Query to get the hashed password for the given username
         const result = await db.query('SELECT password FROM users WHERE username = $1', [username]);
-        if (result.rows.length > 0) {
-            const hashedPassword = result.rows[0].password;
-            return bcrypt.compare(currentPassword, hashedPassword);
+        if (result.rows.length === 0) {
+            console.warn(`User with username "${username}" not found`);
+            return false;
         }
-        return false;
+        const hashedPassword = result.rows[0].password;
+        const isMatch = await bcrypt.compare(currentPassword, hashedPassword);
+        return isMatch;
     } catch (error) {
         console.error('Error verifying password:', error);
         throw error;
@@ -68,7 +71,7 @@ export const verifyPassword = async (username, currentPassword) => {
 
 // Function to update user profile
 export const updateUserProfile = async (username, updates) => {
-    const { first_name, last_name, email, password, country_of_origin, currentPassword } = updates;
+    const { first_name, last_name, newUsername, email, password, bio, country_of_origin, currentPassword } = updates;
 
     try {
         // Verify current password
@@ -81,6 +84,7 @@ export const updateUserProfile = async (username, updates) => {
         const values = [];
         let index = 1;
 
+        // Add fields to update 
         if (first_name) {
             updateFields.push(`first_name = $${index++}`);
             values.push(first_name);
@@ -88,6 +92,17 @@ export const updateUserProfile = async (username, updates) => {
         if (last_name) {
             updateFields.push(`last_name = $${index++}`);
             values.push(last_name);
+        }
+        // Add new username to update
+        if (newUsername) {
+            // Check if the new username already exists
+            const existingUser = await findUserByUsername(newUsername);
+            if (existingUser && existingUser.username !== username) {
+                return { success: false, message: 'Username is already taken' };
+            } else {
+                updateFields.push(`username = $${index++}`);
+                values.push(newUsername);
+            }
         }
         if (email) {
             updateFields.push(`email = $${index++}`);
@@ -98,23 +113,30 @@ export const updateUserProfile = async (username, updates) => {
             updateFields.push(`password = $${index++}`);
             values.push(hashedPassword);
         }
+        if (bio) {
+            updateFields.push(`bio = $${index++}`);
+            values.push(bio);
+        }
         if (country_of_origin) {
             updateFields.push(`country_of_origin = $${index++}`);
-            values.push(role);
+            values.push(country_of_origin);
         }
-
-        // Ensure the username is the last param
-        values.push(username);
-
-        // Execute the query
-        if (updateFields.length > 0) {
-            const query = `UPDATE users SET ${updateFields.join(', ')} WHERE username = $${index}`;
-            await db.query(query, values);
-            console.log('Profile updated successfully for user:', username);
-            return { success: true, message: 'Profile updated successfully' };
-        } else {
+        
+        // If there are no fields to update, return an error
+        if (updateFields.length === 0) {
             return { success: false, message: 'No fields to update' };
         }
+
+        // Add the current username for the WHERE clause (or old username in case of update)
+        values.push(username);
+
+        // Construct and execute the dynamic query
+        const query = `UPDATE users SET ${updateFields.join(', ')} WHERE username = $${index}`;
+        await db.query(query, values);
+
+        console.log('Profile updated successfully for user:', username);
+        return { success: true, message: 'Profile updated successfully' };
+
     } catch (error) {
         console.error('Error updating profile:', error);
         throw new Error('Error updating profile');
