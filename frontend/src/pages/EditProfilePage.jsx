@@ -16,6 +16,7 @@ function EditProfilePage() {
         country_of_origin: '',
     });
 
+    const [profilePicture, setProfilePicture] = useState(null); 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -44,7 +45,7 @@ function EditProfilePage() {
     };
 
     const handleFileChange = (e) => {
-        setProfilePicture(e.target.files[0]);
+        setProfilePicture(e.target.files[0]); // Update profile picture state
     };
 
     // Handle form submission
@@ -57,22 +58,28 @@ function EditProfilePage() {
         if (userConfirmation === null) return;
 
         try {
-            // Send the PUT request to update the profile
-            const response = await axios.put(`/api/auth/profile/${user.username}`, {
+            // Create FormData object to handle text and file data
+            const formData = new FormData();
+            formData.append('first_name', user.first_name);
+            formData.append('last_name', user.last_name);
+            formData.append('email', user.email);
+            formData.append('password', newPassword);
+            formData.append('bio', user.bio);
+            formData.append('country_of_origin', user.country_of_origin);
+            formData.append('currentPassword', userConfirmation);
+            formData.append('newUsername', user.username);
+            if (profilePicture) {
+                formData.append('profile_picture', profilePicture); // Append the profile picture if selected
+            }
 
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                password: newPassword,
-                bio: user.bio,
-                country_of_origin: user.country_of_origin,
-                currentPassword: userConfirmation,
-                newUsername: user.username // Send new username if it's changed
-            }, { withCredentials: true });
+            // Send the PUT request to update the profile with form data
+            const response = await axios.put(`/api/auth/profile/${user.username}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true,
+            });
 
             setMessage(response.data.message);
             console.log('Profile updated successfully:', response.data);
-            // Optionally redirect or reload page
         } catch (err) {
             setError(err.response?.data?.message || 'Error updating profile');
             console.error('Error updating profile:', err);
@@ -89,16 +96,16 @@ function EditProfilePage() {
             <h2>Edit Profile For User: {user.username}</h2>
             {error && <Alert variant="danger">{error}</Alert>}
             {message && <Alert variant="success">{message}</Alert>}
-            <Form className='mt-4' onSubmit={handleSubmit}>
-{/* 
+            <Form className='mt-4' onSubmit={handleSubmit} encType="multipart/form-data">
                 <Form.Group className="edit-form" controlId="formProfilePicture">
+                   
                     <Form.Label>Profile Picture</Form.Label>
                     <Form.Control
                         type="file"
                         name="profile_picture"
                         onChange={handleFileChange}
                     />
-                </Form.Group> */}
+                </Form.Group>
 
                 <Form.Group className="edit-form" controlId="formFirstName">
                     <Form.Label>First Name</Form.Label>

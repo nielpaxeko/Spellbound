@@ -11,9 +11,12 @@ function UserProfile() {
     const { username } = useParams();
     const [user, setUser] = useState({});
     const [currentUser, setCurrentUser] = useState(null);
-    const profilePicture = user.profile_picture || defaultProfilePicture;
     const navigate = useNavigate();
-    
+
+    const profilePicture = user.profile_picture
+    ? `data:image/jpeg;base64,${user.profile_picture}`
+    : defaultProfilePicture;
+
 
     useEffect(() => {
         // Fetch the current user's username
@@ -40,7 +43,12 @@ function UserProfile() {
         <div className='profile-wrapper'>
             <Card className="profile-card rounded-4">
                 <Card.Header className='profile-header'>
-                    <Image src={profilePicture} roundedCircle className="profile-picture img-thumbnail" />
+                    <img
+                        src={profilePicture}
+                        alt="Profile"
+                        style={{ width: '150px', height: '150px', borderRadius: '50%' }}
+                        className="profile-picture img-thumbnail"
+                    />
                     <Card.Title className='text-light'>{user.username}</Card.Title>
                     {user.bio && <Card.Text className='text-light'>{user.bio}</Card.Text>}
                     {!isCurrentUser && (

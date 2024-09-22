@@ -78,7 +78,10 @@ export const getUserProfile = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        res.json(user);
+        if (user.profile_picture) {
+            user.profile_picture = user.profile_picture.toString('base64'); 
+        }
+        res.status(200).json(user);
     } catch (err) {
         console.error('Error fetching user profile:', err);
         res.status(500).json({ error: 'Server error' });

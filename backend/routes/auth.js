@@ -2,6 +2,7 @@ import express from "express";
 import { signup, checkAuthStatus, getCurrentUser, getUserProfile } from "../controllers/authController.js";
 import { updateUserProfile } from "../models/userModel.js"
 import passport from "passport";
+import upload from "../middleware/uploadProfilePicture.js";
 
 const router = express.Router();
 
@@ -61,14 +62,18 @@ router.post('/logout', (req, res) => {
 });
 
 
-
-// Update user profile
-router.put('/profile/:username', async (req, res) => {
+// Update user profile with optional profile picture
+router.put('/profile/:username', upload.single('profile_picture'), async (req, res) => {
     const { username } = req.params;
     const updates = req.body;
+    const profilePicture = req.file;
 
     try {
+        if (profilePicture) {
+            updates.profile_picture = profilePicture.buffer;
+        }
         const result = await updateUserProfile(username, updates);
+
         if (result.success) {
             res.status(200).json({ message: result.message });
         } else {
@@ -79,6 +84,8 @@ router.put('/profile/:username', async (req, res) => {
         res.status(500).json({ message: 'Error updating profile', error: error.message });
     }
 });
+
+
 
 
 export default router;

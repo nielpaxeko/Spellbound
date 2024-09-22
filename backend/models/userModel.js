@@ -71,7 +71,7 @@ export const verifyPassword = async (username, currentPassword) => {
 
 // Function to update user profile
 export const updateUserProfile = async (username, updates) => {
-    const { first_name, last_name, newUsername, email, password, bio, country_of_origin, currentPassword } = updates;
+    const { first_name, last_name, newUsername, email, password, bio, country_of_origin, currentPassword, profile_picture } = updates;
 
     try {
         // Verify current password
@@ -79,7 +79,6 @@ export const updateUserProfile = async (username, updates) => {
             return { success: false, message: 'Current password is incorrect' };
         }
 
-        // Prepare the update query
         const updateFields = [];
         const values = [];
         let index = 1;
@@ -93,9 +92,7 @@ export const updateUserProfile = async (username, updates) => {
             updateFields.push(`last_name = $${index++}`);
             values.push(last_name);
         }
-        // Add new username to update
         if (newUsername) {
-            // Check if the new username already exists
             const existingUser = await findUserByUsername(newUsername);
             if (existingUser && existingUser.username !== username) {
                 return { success: false, message: 'Username is already taken' };
@@ -121,20 +118,21 @@ export const updateUserProfile = async (username, updates) => {
             updateFields.push(`country_of_origin = $${index++}`);
             values.push(country_of_origin);
         }
-        
-        // If there are no fields to update, return an error
+        if (profile_picture) {
+            updateFields.push(`profile_picture = $${index++}`);
+            values.push(profile_picture);  // Store binary data in the database
+        }
+
+        // If no fields to update
         if (updateFields.length === 0) {
             return { success: false, message: 'No fields to update' };
         }
 
-        // Add the current username for the WHERE clause (or old username in case of update)
-        values.push(username);
+        values.push(username);  // Add username as the final WHERE clause value
 
-        // Construct and execute the dynamic query
         const query = `UPDATE users SET ${updateFields.join(', ')} WHERE username = $${index}`;
         await db.query(query, values);
 
-        console.log('Profile updated successfully for user:', username);
         return { success: true, message: 'Profile updated successfully' };
 
     } catch (error) {
@@ -142,3 +140,5 @@ export const updateUserProfile = async (username, updates) => {
         throw new Error('Error updating profile');
     }
 };
+
+
