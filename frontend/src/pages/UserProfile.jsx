@@ -14,8 +14,8 @@ function UserProfile() {
     const navigate = useNavigate();
 
     const profilePicture = user.profile_picture
-    ? `data:image/jpeg;base64,${user.profile_picture}`
-    : defaultProfilePicture;
+        ? `data:image/jpeg;base64,${user.profile_picture}`
+        : defaultProfilePicture;
 
 
     useEffect(() => {
@@ -46,28 +46,39 @@ function UserProfile() {
                     <img
                         src={profilePicture}
                         alt="Profile"
-                        style={{ width: '150px', height: '150px', borderRadius: '50%' }}
-                        className="profile-picture img-thumbnail"
+                        className="profile-picture"
                     />
                     <Card.Title className='text-light'>{user.username}</Card.Title>
                     {user.bio && <Card.Text className='text-light'>{user.bio}</Card.Text>}
-                    {!isCurrentUser && (
-                        <div className='profile-btns'>
-                            <Button className='btn btn-pink'>Follow</Button>
-                            <Button className='btn btn-kiss'>Message</Button>
-                        </div>
-                    )}
+
                 </Card.Header>
                 <Card.Body>
                     <Card.Text>Name: {user.first_name} {user.last_name}</Card.Text>
                     <Card.Text>Email: {user.email}</Card.Text>
                     {user.country_of_origin && <Card.Text>Country: {user.country_of_origin}</Card.Text>}
                 </Card.Body>
-                {isCurrentUser && (  // Only show edit button if viewing own profile
-                    <Card.Footer className='profile-footer'>
-                        <Button className='btn-pink' onClick={handleEditProfile}>Edit Profile</Button>
-                    </Card.Footer>
-                )}
+                {/* For the footer, if viewing another user's profile then add follow and message buttons, else add edit button */}
+                <Card.Footer className='profile-footer'>
+                    <div className='profile-btns'>
+                        {/* <Button className='btn btn-secondary'>Bio</Button>
+                        <Button className='btn btn-secondary'>Trail</Button> */}
+                        {!isCurrentUser && (
+                            <div className='profile-btns'>
+                                <Button className='btn btn-pink'>Follow</Button>
+                                <Button className='btn btn-pink'>Message</Button>
+                            </div>
+                        )}
+                        {isCurrentUser && (
+                            <div className='profile-btns'>
+                                <Button className='btn-pink' onClick={handleEditProfile}>Edit Profile</Button>
+                            </div>
+
+                        )}
+                    </div>
+
+
+                </Card.Footer>
+
             </Card>
         </div>
     );

@@ -3,11 +3,12 @@
     --primary-font: 'playfair', sans-serif;
     --secondary-font: 'lato', sans-serif;
     --berry: #921A40;
-    --pink: #C75B7A;
+    --pink: #B83B5E;
     --kiss: #D9ABAB;
     --sand: #F4D9D0;
     --purple: #800059;
     --orange: #FF960B;
+    --warm: #F08A5D;
 }
 
 /* Fonts */
@@ -78,7 +79,7 @@ section {
     color: var(--pink);
 }
 
-/* Footer */
+/* Buttons */
 .btn {
     background: var(--berry);
     color: white;
@@ -93,6 +94,21 @@ section {
     background-color: white;
     color: var(--berry);
     border: 1px solid var(--berry);
+}
+
+.btn-secondary {
+    background-color: var(--warm);
+    color: white;
+    border: 1px solid var(--warm);
+    border-radius: 25px;
+}
+
+.btn-secondary:hover{
+    transition: transform 0.4s ease-in-out;
+    transform: scale(1.020);
+    background-color: white;
+    color: var(--warm);
+    border: 1px solid var(--warm);
 }
 
 .btn-pink {
