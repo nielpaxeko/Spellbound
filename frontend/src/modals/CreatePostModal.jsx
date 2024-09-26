@@ -1,6 +1,9 @@
-import { Button, Dropdown, Modal, Form } from "react-bootstrap";
+import { Button, Dropdown, Modal, Form, Spinner, Alert } from "react-bootstrap";
 import React, { useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 import '../styles/timeline.css';
+
 
 const CreatePostModal = ({ show, onHide, user }) => {
     const [title, setTitle] = useState('');
@@ -8,6 +11,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
     const [privacy, setPrivacy] = useState('public');
     const [mediaFile, setMediaFile] = useState(null);
     const [mediaType, setMediaType] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleMediaChange = (e) => {
         const file = e.target.files[0];
@@ -17,48 +21,46 @@ const CreatePostModal = ({ show, onHide, user }) => {
                 setMediaType(fileType);
                 setMediaFile(file);
             } else {
-                alert('Please upload a valid image or video file.');
+                setErrorMessage('Please upload a valid image or video file.');
                 setMediaFile(null);
             }
         }
     };
 
-
-
     const handleCreatePost = async () => {
-        const formData = new FormData();
-        formData.append('user_id', user.user_id);
-        formData.append('title', title);
-        formData.append('content', content);
-        formData.append('privacy', privacy);
-        if (mediaFile) {
-            formData.append('media', mediaFile);
-        }
-
         try {
-            // Save the new post to db via API
-            await axios.post('/api/posts', formData, {
+            const formData = new FormData();
+            formData.append('user_id', user.user_id);
+            formData.append('title', title);
+            formData.append('content', content);
+            formData.append('privacy', privacy);
+            if (mediaFile) {
+                formData.append('media', mediaFile);
+            }
+
+            const response = await axios.post('/api/posts/post', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                withCredentials: true,
             });
-            onHide(); // Close the modal after successful post creation
+            console.log('Post created successfully:', response.data);
         } catch (error) {
             console.error('Error creating post:', error);
+            console.error('Error Stack:', error.stack);
         }
     };
+
 
     return (
         <Modal show={show} onHide={onHide} className="create-post-template">
             <Modal.Header closeButton>
                 <Modal.Title className="post-modal-title">
-                    <p style={{ margin: 0 }}>Create Post</p>
-                    {/* Dropdown for privacy selection */}
+                    Create Post
                     <Dropdown onSelect={(e) => setPrivacy(e)} style={{ marginLeft: "10px" }}>
-                        <Dropdown.Toggle variant="light" id="dropdown-basic" className='dropdown-toggle'>
-                            {privacy.charAt(0).toUpperCase() + privacy.slice(1)} {/* Display selected privacy */}
+                        <Dropdown.Toggle variant="light" id="dropdown-basic">
+                            {privacy.charAt(0).toUpperCase() + privacy.slice(1)}
                         </Dropdown.Toggle>
-
                         <Dropdown.Menu>
                             <Dropdown.Item eventKey="public">Public</Dropdown.Item>
                             <Dropdown.Item eventKey="private">Private</Dropdown.Item>
@@ -68,8 +70,9 @@ const CreatePostModal = ({ show, onHide, user }) => {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {/* Post Content */}
                 <Form className="post-form">
+                    {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+                    {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
                     <Form.Group controlId="title">
                         <Form.Label>Title</Form.Label>
@@ -78,6 +81,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
                             placeholder="Enter post title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
+                            required
                         />
                     </Form.Group>
 
@@ -96,24 +100,45 @@ const CreatePostModal = ({ show, onHide, user }) => {
                         <Form.Label>Choose Image or Video</Form.Label>
                         <Form.Control
                             type="file"
-                            accept="image/*,video/*" // Accept both images and videos
+                            accept="image/*,video/*"
                             onChange={handleMediaChange}
                         />
                     </Form.Group>
+
+                    {/* Preview media file if available */}
+                    {/* Media type */}
                     {mediaFile && (
                         <p className="text-muted">
                             {mediaType === 'image' ? 'Image selected' : 'Video selected'}
                         </p>
                     )}
+
+                    {/* Actual Media */}
+                    {mediaFile && mediaType === 'image' && (
+                        <img
+                            src={URL.createObjectURL(mediaFile)}
+                            alt="Preview"
+                            className="prompt-media"
+                        />
+                    )}
+
+                    {mediaFile && mediaType === 'video' && (
+                        <video
+                            controls
+                            src={URL.createObjectURL(mediaFile)}
+                            className="prompt-media"
+                        />
+                    )}
                 </Form>
             </Modal.Body>
-            <Modal.Footer>
-                <Button id="create-post-btn" onClick={handleCreatePost}>
-                    Post
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
-}
+};
 
-export default CreatePostModal
+// Add PropTypes to validate props
+CreatePostModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    onHide: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+};
+export default CreatePostModal;

@@ -2,42 +2,46 @@ import React, { useState, useEffect } from 'react';
 import logo from "../assets/rover.png";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
+// Firebase imports
+import { auth } from '../../../backend/firebase/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 function NavigationBar() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch authentication status
-        fetch('/api/auth/status', { credentials: 'include' })
-            .then(response => response.json())
-            .then(data => {
-                setIsAuthenticated(data.isAuthenticated);
-                if (data.isAuthenticated) {
-                    // If authenticated, fetch the current user's username
-                    axios.get('/api/auth/currentUser', { withCredentials: true })
-                        .then(response => setUser(response.data.username))
-                        .catch(error => console.error('Error fetching current user:', error));
-                }
-            })
-            .catch(error => console.error('Error fetching auth status:', error));
+        // Listen for authentication state changes
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                setIsAuthenticated(true);
+                setUser(currentUser.displayName || currentUser.email); // You can customize this to use displayName, email, etc.
+            } else {
+                setIsAuthenticated(false);
+                setUser(null);
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
     }, []);
 
-    // Deathenticate user and send to auth screen
-    const handleLogout = () => {
-        fetch('/api/auth/logout', {
-            method: 'POST',
-            credentials: 'include'
-        })
-            .then(response => {
-                if (response.ok) {
-                    setIsAuthenticated(false);
-                    window.location.href = '/auth';
-                }
-            })
-            .catch(error => console.error('Error logging out:', error));
+    // Handle user logout with Firebase
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            setIsAuthenticated(false);
+            navigate('/auth');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
     };
+    
+    const currentUser = auth.currentUser
 
     return (
         <Navbar className="p-2 navbar-dark" collapseOnSelect expand="md">
@@ -50,16 +54,17 @@ function NavigationBar() {
                 <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">
                     <Nav className="navbar-nav">
                         <Nav.Link className="nav-link text-light" href={isAuthenticated ? "/home" : "/landing"}>
-                            <i className="nav-icon bi bi-house"></i> Home  {/* Home */}
+                            <i className="nav-icon bi bi-house"></i> Home
                         </Nav.Link>
-                        {/* Display different Navbar based on wether the user is authenticated or not  */}
+
+                        {/* Conditional rendering based on authentication */}
                         {isAuthenticated ? (
                             <>
                                 <Nav.Link className="nav-link text-light" href="/messages">
                                     <i className="nav-icon bi bi-chat"></i> Messages
                                 </Nav.Link>
                                 {user && (
-                                    <Nav.Link className="nav-link text-light" href={`/profile/${user}`}>
+                                    <Nav.Link className="nav-link text-light" href={`/profile/${currentUser.uid}`}>
                                         <i className="nav-icon bi bi-person-circle"></i> Profile
                                     </Nav.Link>
                                 )}

@@ -16,7 +16,7 @@ export const upload = multer({
             cb(new Error('Only image files (jpeg, jpg, png, gif) are allowed.'));
         }
     },
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: 4 * 1024 * 1024 },
 });
 
 export default upload;

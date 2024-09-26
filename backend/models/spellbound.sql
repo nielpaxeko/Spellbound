@@ -37,15 +37,16 @@ CREATE TABLE user_visits (
 CREATE TABLE posts (
     post_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
+    privacy VARCHAR(20), 
+	title VARCHAR(255) NOT NULL,
+    content TEXT,
+    media_url VARCHAR(255) DEFAULT NULL,
     likes INT DEFAULT 0,
     dislikes INT DEFAULT 0,
-    title VARCHAR(255) NOT NULL,
-    content TEXT,
-    media_url VARCHAR(255) DEFAULT NULL
+	created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE comments (
+CREATE TABLE post_comments (
     comment_id SERIAL PRIMARY KEY,
     post_id INT REFERENCES posts(post_id) ON DELETE CASCADE,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
@@ -59,7 +60,7 @@ CREATE TABLE post_likes (
     post_id INT REFERENCES posts(post_id) ON DELETE CASCADE,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     liked_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (post_id, user_id)  -- Ensures that a user can only like a post once
+    UNIQUE (post_id, user_id)
 );
 Ï
 -- Examples of INSERT INTO the user tables

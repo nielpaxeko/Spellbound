@@ -47,6 +47,12 @@
     margin: 0;
 }
 
+.prompt-media {
+    width: auto;
+    height: auto;
+    padding: 5px;
+}
+
 .post-modal-title {
     display: flex;
     flex-direction: row;

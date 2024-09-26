@@ -6,20 +6,24 @@ import Navbar from './components/navbar.jsx';
 import UserProfile from "./pages/UserProfile.jsx"
 import LandingPage from './pages/LandingPage.jsx';
 import EditProfilePage from './pages/EditProfilePage.jsx';
+import { AuthProvider } from '../../backend/contexts/authContext/index.jsx';
+
 
 const App = () => {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/landing" element={<LandingPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/" element={<AuthPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/profile/:username" element={<UserProfile />} />
-        <Route path="/profile/:username/edit" element={<EditProfilePage />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={<AuthPage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/profile/:uid" element={<UserProfile />} />
+          <Route path="/profile/:uid/edit" element={<EditProfilePage />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 

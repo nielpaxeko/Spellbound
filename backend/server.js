@@ -1,10 +1,8 @@
 import express from "express";
-import session from "express-session";
 import authRoutes from './routes/auth.js';
+import postRoutes from './routes/posts.js';
 import cors from "cors";
-import passport from "passport";
-import dotenv from "dotenv"
-import "./middleware/passportConfig.js";
+import dotenv from "dotenv";
 
 const app = express();
 const PORT = 3000;
@@ -22,22 +20,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session middleware
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-            maxAge: 1000 * 60 * 60 * 24
-        }
-    })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

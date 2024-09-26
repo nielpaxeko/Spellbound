@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/auth.css';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import logo from "../assets/logo.png"
+import { useNavigate, Navigate } from 'react-router-dom';
+import logo from "../assets/logo.png";
+
+// Firebase imports
+import { doSignInWithEmailAndPassword, doCreateUserWithEmailAndPassword, doSignInWithGoogle } from "../../../backend/firebase/auth.js";
+import { useAuth } from "../../../backend/contexts/authContext/index.jsx";
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from "../../../backend/firebase/firebase.js";
 
 function AuthPage() {
-    const [isLogin, setIsLogin] = useState(true);
-    const navigate = useNavigate();
+    const { currentUser, userLoggedIn } = useAuth();
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -15,12 +19,21 @@ function AuthPage() {
         email: "",
         country_of_origin: "",
         password: "",
-        confirmPassword: "",
+        confirmPassword: ""
     });
+    const [isLogin, setIsLogin] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isSigningIn, setIsSigningIn] = useState(false);
+    const navigate = useNavigate();
 
+    // Handle input changes
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    // Toggle between sign-up and login forms
     const toggleForm = () => {
         setIsLogin(!isLogin);
-        // Reset form data when toggling
         setFormData({
             firstName: "",
             lastName: "",
@@ -28,62 +41,82 @@ function AuthPage() {
             email: "",
             country_of_origin: "",
             password: "",
-            confirmPassword: "",
+            confirmPassword: ""
         });
     };
 
-    // Handle form input change
-    const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    // Handle Sign Up form submission
+    // Handle Sign Up form submission using Firebase
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/api/auth/signup", {
+            if (formData.password !== formData.confirmPassword) {
+                setErrorMessage("Passwords do not match");
+                return;
+            }
+            setIsSigningIn(true);
+            // Create user in Firebase Authentication
+            const userCredential = await doCreateUserWithEmailAndPassword(formData.email, formData.password);
+            const user = userCredential.user;
+
+            // Add the user's additional profile data to Firestore with UID as the document ID
+            await setDoc(doc(db, "users", user.uid), {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 username: formData.username,
                 email: formData.email,
-                password: formData.password,
-                country_of_origin: formData.country_of_origin,
-                confirmPassword: formData.confirmPassword,
+                createdAt: new Date().toISOString(),
             });
+
             alert("Sign up successful!");
             navigate('/home');
         } catch (error) {
             console.error("Sign up failed:", error);
-            alert(`Sign up failed: ${error.response?.data?.message || error.message}`);
+            setErrorMessage(error.message || "Sign up failed");
+        } finally {
+            setIsSigningIn(false);
         }
     };
 
-    // Handle Sign In form submission
+    // Handle Sign In form submission using Firebase
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/api/auth/login", {
-                username: formData.email,
-                password: formData.password,
-            }, { withCredentials: true });
-            console.log("Login response:", response);
-            if (response.data.message === "Login successful") {
-                alert("Login successful!");
-                navigate('/home');
-            } else {
-                alert("Login failed!");
-            }
+            setIsSigningIn(true);
+            await doSignInWithEmailAndPassword(formData.email, formData.password);
+            alert("Login successful!");
+            navigate('/home');
         } catch (error) {
-            console.error("Login error:", error);
-            alert(`Login failed: ${error.response?.data?.message || error.message}`);
+            console.error("Login failed:", error);
+            setErrorMessage(error.message || "Login failed");
+        } finally {
+            setIsSigningIn(false);
         }
     };
 
+    // Handle Google Sign-In using Firebase
+    const onGoogleSignIn = async (e) => {
+        e.preventDefault();
+        try {
+            setIsSigningIn(true);
+            await doSignInWithGoogle();
+            navigate('/home');
+        } catch (error) {
+            console.error("Google Sign-In failed:", error);
+            setErrorMessage(error.message || "Google Sign-In failed");
+        } finally {
+            setIsSigningIn(false);
+        }
+    };
+
+    // If the user is logged in, redirect to home
+    if (userLoggedIn) {
+        return <Navigate to="/home" replace={true} />;
+    }
+
+
     return (
         <div className="auth-wrapper">
+            {userLoggedIn && (<Navigate to={"/home"} replace={true} />)}
             <div className={`auth-container container-lg  ${!isLogin ? 'active' : ''}`}>
                 {/* Sign Up Form */}
                 <div className={`sign-up ${isLogin ? 'hidden' : ''}`}>
@@ -155,7 +188,13 @@ function AuthPage() {
                             value={formData.password}
                             onChange={handleInputChange}
                         />
-                        <button className="btn w-100" type="submit">Sign In</button>
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        <button className="btn w-100" type="submit" disabled={isSigningIn}>
+                            {isSigningIn ? "Signing In..." : "Sign In"}
+                        </button>
+                        <button className="btn w-100 google-btn" onClick={onGoogleSignIn} disabled={isSigningIn}>
+                            {isSigningIn ? "Signing In with Google..." : "Sign In with Google"}
+                        </button>
                         <p>Don&apos;t have an account?</p>
                         <button type="button" onClick={toggleForm} className="btn hidden" id="signup-button">Create Account</button>
                     </form>
