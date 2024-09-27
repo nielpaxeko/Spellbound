@@ -12,9 +12,7 @@ import PropTypes from 'prop-types';
 function CreatePostPrompt({ user }) {
     const [showCreatePostModal, setShowCreatePostModal] = useState(false);
 
-    const profilePicture = user?.profile_picture
-        ? `data:image/jpeg;base64,${user.profile_picture}`
-        : defaultProfilePicture;
+    const profilePicture = user?.profilePicture || defaultProfilePicture;
 
     return (
         <div className="create-post-prompt shadow-sm border rounded-5 p-3 bg-white shadow box-area">

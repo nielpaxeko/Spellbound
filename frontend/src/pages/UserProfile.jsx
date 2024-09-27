@@ -1,39 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
-import { useAuth } from "../../../backend/contexts/authContext/index.jsx"; // Firebase auth context
-import { doc, getDoc } from 'firebase/firestore'; // Firestore imports
-import { db } from "../../../backend/firebase/firebase.js"; // Your Firebase configuration
+import { useAuth } from "../../../backend/contexts/authContext/index.jsx";
+import { doc, getDoc } from 'firebase/firestore'; 
+import { db } from "../../../backend/firebase/firebase.js"; 
 import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/profile.css';
 
 function UserProfile() {
-    const { uid } = useParams(); // Capture UID from the URL
-    const [user, setUser] = useState(null); // Store user data
-    const [error, setError] = useState(null); // Handle errors if any
-    const { currentUser } = useAuth(); // Get the current authenticated user
+    const { uid } = useParams(); 
+    const [user, setUser] = useState(null); 
+    const [error, setError] = useState(null); 
+    const { currentUser } = useAuth();
     const navigate = useNavigate();
 
-    const profilePicture = user?.profile_picture
-        ? `data:image/jpeg;base64,${user.profile_picture}`
-        : defaultProfilePicture;
+    const profilePicture = user?.profilePicture || defaultProfilePicture;
 
     useEffect(() => {
         const fetchUserData = async () => {
             if (!uid) {
-                // If there's no UID in the URL, return or set an error
                 setError("No user ID provided.");
                 return;
             }
 
             try {
-                // Fetch the user data from Firestore using the uid from the URL
                 const userDocRef = doc(db, "users", uid);
                 const userDoc = await getDoc(userDocRef);
 
                 if (userDoc.exists()) {
-                    // Set the user data including the uid from Firestore
                     setUser({ uid, ...userDoc.data() });
                 } else {
                     setError("User profile not found.");
@@ -47,15 +42,14 @@ function UserProfile() {
         fetchUserData();
     }, [uid]);
 
-    // Handle when the current user's profile is being viewed
     const isCurrentUser = currentUser && currentUser.uid === uid;
 
     // Navigate user to the edit profile page
     const handleEditProfile = () => {
-        navigate(`/profile/${uid}/edit`); // Navigate to edit profile page based on uid
+        navigate(`/profile/${uid}/edit`);
     };
 
-    // If there's an error or user data is not yet loaded, display a message
+    // If there's an error display a message
     if (error) {
         return <div className="error-message">{error}</div>;
     }
@@ -80,7 +74,7 @@ function UserProfile() {
                     <Card.Body>
                         <Card.Text>Name: {user.firstName} {user.lastName}</Card.Text>
                         <Card.Text>Email: {user.email}</Card.Text>
-                        {user.country_of_origin && <Card.Text>Country: {user.country_of_origin}</Card.Text>}
+                        {user.country && <Card.Text>Country: {user.country}</Card.Text>}
                     </Card.Body>
                     <Card.Footer className='profile-footer'>
                         <div className='profile-btns'>

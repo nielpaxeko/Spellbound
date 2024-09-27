@@ -1,9 +1,10 @@
-import { Button, Dropdown, Modal, Form, Spinner, Alert } from "react-bootstrap";
+import { Button, Dropdown, Modal, Form, Alert } from "react-bootstrap";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
+import { db, storage } from "../../../backend/firebase/firebase.js";
+import { collection, addDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '../styles/timeline.css';
-
 
 const CreatePostModal = ({ show, onHide, user }) => {
     const [title, setTitle] = useState('');
@@ -12,6 +13,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
     const [mediaFile, setMediaFile] = useState(null);
     const [mediaType, setMediaType] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleMediaChange = (e) => {
         const file = e.target.files[0];
@@ -27,30 +29,45 @@ const CreatePostModal = ({ show, onHide, user }) => {
         }
     };
 
-    const handleCreatePost = async () => {
-        try {
-            const formData = new FormData();
-            formData.append('user_id', user.user_id);
-            formData.append('title', title);
-            formData.append('content', content);
-            formData.append('privacy', privacy);
-            if (mediaFile) {
-                formData.append('media', mediaFile);
-            }
-
-            const response = await axios.post('/api/posts/post', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                withCredentials: true,
-            });
-            console.log('Post created successfully:', response.data);
-        } catch (error) {
-            console.error('Error creating post:', error);
-            console.error('Error Stack:', error.stack);
-        }
+    const uploadMedia = async (file) => {
+        const storageRef = ref(storage, `posts/${file.name}`);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        return downloadURL;
     };
 
+    const handleCreatePost = async () => {
+        setErrorMessage('');
+        setSuccessMessage('');
+
+        try {
+            const postData = {
+                userId: user.user_id, 
+                title,
+                content,
+                privacy,
+                createdAt: new Date(),
+            };
+
+            if (mediaFile) {
+                const mediaUrl = await uploadMedia(mediaFile);
+                postData.mediaUrl = mediaUrl;
+            }
+
+            // Add a new document to the posts collection in Firestore
+            const postsCollectionRef = collection(db, "posts");
+            await addDoc(postsCollectionRef, postData);
+
+            setSuccessMessage('Post created successfully!');
+            setTitle('');
+            setContent('');
+            setMediaFile(null);
+            setMediaType(null);
+        } catch (error) {
+            console.error('Error creating post:', error);
+            setErrorMessage('Error creating post. Please try again later.');
+        }
+    };
 
     return (
         <Modal show={show} onHide={onHide} className="create-post-template">
@@ -70,7 +87,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form className="post-form">
+                <Form className="post-form" onSubmit={(e) => { e.preventDefault(); handleCreatePost(); }}>
                     {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
                     {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
@@ -106,14 +123,13 @@ const CreatePostModal = ({ show, onHide, user }) => {
                     </Form.Group>
 
                     {/* Preview media file if available */}
-                    {/* Media type */}
                     {mediaFile && (
                         <p className="text-muted">
                             {mediaType === 'image' ? 'Image selected' : 'Video selected'}
                         </p>
                     )}
 
-                    {/* Actual Media */}
+                    {/* Actual Media Preview */}
                     {mediaFile && mediaType === 'image' && (
                         <img
                             src={URL.createObjectURL(mediaFile)}
@@ -129,6 +145,8 @@ const CreatePostModal = ({ show, onHide, user }) => {
                             className="prompt-media"
                         />
                     )}
+
+                    <Button type="submit" className="mt-3">Create Post</Button>
                 </Form>
             </Modal.Body>
         </Modal>

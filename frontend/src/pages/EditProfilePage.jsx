@@ -1,43 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
+import { getAuth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db } from "../../../backend/firebase/firebase.js";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/profile.css';
 
 function EditProfilePage() {
     const [user, setUser] = useState({
-        first_name: '',
-        last_name: '',
+        firstName: '',
+        lastName: '',
         username: '',
         email: '',
-        password: '',
         bio: '',
-        country_of_origin: '',
+        country: '',
+        profilePicture: '' // Initialize profilePicture in user state
     });
 
-    const [profilePicture, setProfilePicture] = useState(null); 
-    const [currentPassword, setCurrentPassword] = useState('');
+    const [profilePicture, setProfilePicture] = useState(null);
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [currentUser, setCurrentUser] = useState(null);
+    const [currentUserUid, setCurrentUserUid] = useState(null);
     const navigate = useNavigate();
+    const auth = getAuth();
+    const storage = getStorage(); // Initialize Firebase Storage
 
     useEffect(() => {
-        // Fetch the current user's username
-        axios.get('/api/auth/currentUser', { withCredentials: true })
-            .then(response => {
-                setCurrentUser(response.data.username);
-                // Fetch the user's data to pre-fill the form
-                return axios.get(`/api/auth/profile/${response.data.username}`, { withCredentials: true });
-            })
-            .then(response => setUser(response.data))
-            .catch(error => {
-                console.error('Error fetching user data:', error);
-                setError('Error fetching user data. Please try again later.');
-            });
-    }, []);
+        // Get the current user's UID
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+            setCurrentUserUid(currentUser.uid);
+
+            // Fetch the user's data from Firestore
+            const fetchUserData = async () => {
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    if (userDoc.exists()) {
+                        setUser(userDoc.data());
+                    } else {
+                        setError("User data not found");
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    setError('Error fetching user data. Please try again later.');
+                }
+            };
+
+            fetchUserData();
+        } else {
+            setError("User is not authenticated.");
+        }
+    }, [auth.currentUser]);
 
     // Handle form changes
     const handleChange = (e) => {
@@ -45,7 +61,13 @@ function EditProfilePage() {
     };
 
     const handleFileChange = (e) => {
-        setProfilePicture(e.target.files[0]); // Update profile picture state
+        const file = e.target.files[0];
+        setProfilePicture(file); 
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            console.log(reader.result);
+        };
+        reader.readAsDataURL(file);
     };
 
     // Handle form submission
@@ -55,39 +77,57 @@ function EditProfilePage() {
         setError('');
 
         const userConfirmation = window.prompt('Please enter your current password to confirm changes:');
-        if (userConfirmation === null) return;
+        if (!userConfirmation) return;
+
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+            setError('User is not authenticated.');
+            return;
+        }
+
+        const credential = EmailAuthProvider.credential(currentUser.email, userConfirmation);
 
         try {
-            // Create FormData object to handle text and file data
-            const formData = new FormData();
-            formData.append('first_name', user.first_name);
-            formData.append('last_name', user.last_name);
-            formData.append('email', user.email);
-            formData.append('password', newPassword);
-            formData.append('bio', user.bio);
-            formData.append('country_of_origin', user.country_of_origin);
-            formData.append('currentPassword', userConfirmation);
-            formData.append('newUsername', user.username);
+            await reauthenticateWithCredential(currentUser, credential);
+
+            let profilePictureUrl = user.profilePicture || null;
+
             if (profilePicture) {
-                formData.append('profile_picture', profilePicture); // Append the profile picture if selected
+                const storageRef = ref(storage, `profilePictures/${currentUser.uid}`);
+                const snapshot = await uploadBytes(storageRef, profilePicture);
+                profilePictureUrl = await getDownloadURL(snapshot.ref);
+                console.log('Profile picture uploaded, download URL:', profilePictureUrl);
             }
 
-            // Send the PUT request to update the profile with form data
-            const response = await axios.put(`/api/auth/profile/${user.username}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                withCredentials: true,
+            // Update user data in Firestore
+            const userRef = doc(db, 'users', currentUser.uid);
+            await updateDoc(userRef, {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                email: user.email,
+                bio: user.bio,
+                country: user.country,
+                profilePicture: profilePictureUrl
             });
 
-            setMessage(response.data.message);
-            console.log('Profile updated successfully:', response.data);
-        } catch (err) {
-            setError(err.response?.data?.message || 'Error updating profile');
-            console.error('Error updating profile:', err);
+            // Optionally update password
+            if (newPassword) {
+                await updatePassword(currentUser, newPassword);
+                setMessage('Profile and password updated successfully');
+            } else {
+                setMessage('Profile updated successfully');
+            }
+
+        } catch (error) {
+            setError(error.message || 'Error updating profile');
+            console.error('Error updating profile:', error);
         }
     };
 
     // Redirect to profile page if the user is not authorized
-    if (!currentUser) {
+    if (!currentUserUid) {
         return <Alert variant="danger" className='text-center'>You are not authorized to edit this profile.</Alert>;
     }
 
@@ -98,11 +138,10 @@ function EditProfilePage() {
             {message && <Alert variant="success">{message}</Alert>}
             <Form className='mt-4' onSubmit={handleSubmit} encType="multipart/form-data">
                 <Form.Group className="edit-form" controlId="formProfilePicture">
-                   
                     <Form.Label>Profile Picture</Form.Label>
                     <Form.Control
                         type="file"
-                        name="profile_picture"
+                        name="profilePicture"
                         onChange={handleFileChange}
                     />
                 </Form.Group>
@@ -111,8 +150,8 @@ function EditProfilePage() {
                     <Form.Label>First Name</Form.Label>
                     <Form.Control
                         type="text"
-                        name="first_name"
-                        value={user.first_name}
+                        name="firstName"
+                        value={user.firstName}
                         onChange={handleChange}
                         required
                     />
@@ -122,8 +161,8 @@ function EditProfilePage() {
                     <Form.Label>Last Name</Form.Label>
                     <Form.Control
                         type="text"
-                        name="last_name"
-                        value={user.last_name}
+                        name="lastName"
+                        value={user.lastName}
                         onChange={handleChange}
                         required
                     />
@@ -175,8 +214,8 @@ function EditProfilePage() {
                     <Form.Label>Country</Form.Label>
                     <Form.Control
                         type="text"
-                        name="country_of_origin"
-                        value={user.country_of_origin || ""}
+                        name="country"
+                        value={user.country || ""}
                         onChange={handleChange}
                     />
                 </Form.Group>
