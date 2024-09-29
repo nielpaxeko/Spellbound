@@ -60,6 +60,7 @@ function AuthPage() {
 
             // Add the user's additional profile data to Firestore with UID as the document ID
             await setDoc(doc(db, "users", user.uid), {
+                userID: user.uid,
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 username: formData.username,

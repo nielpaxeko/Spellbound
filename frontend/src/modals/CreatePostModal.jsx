@@ -30,7 +30,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
     };
 
     const uploadMedia = async (file) => {
-        const storageRef = ref(storage, `posts/${file.name}`);
+        const storageRef = ref(storage, `posts/${user.userID}/${file.name}`);
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
         return downloadURL;
@@ -42,7 +42,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
 
         try {
             const postData = {
-                userId: user.user_id, 
+                userID: user.userID, 
                 title,
                 content,
                 privacy,
