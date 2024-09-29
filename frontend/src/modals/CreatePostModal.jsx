@@ -7,7 +7,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '../styles/timeline.css';
 
 const CreatePostModal = ({ show, onHide, user }) => {
-    const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [privacy, setPrivacy] = useState('public');
     const [mediaFile, setMediaFile] = useState(null);
@@ -43,7 +42,6 @@ const CreatePostModal = ({ show, onHide, user }) => {
         try {
             const postData = {
                 userID: user.userID, 
-                title,
                 content,
                 privacy,
                 createdAt: new Date(),
@@ -90,18 +88,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
                 <Form className="post-form" onSubmit={(e) => { e.preventDefault(); handleCreatePost(); }}>
                     {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
                     {successMessage && <Alert variant="success">{successMessage}</Alert>}
-
-                    <Form.Group controlId="title">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Enter post title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
+                    
                     <Form.Group controlId="content">
                         <Form.Label>Content</Form.Label>
                         <Form.Control

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import CreatePostPrompt from "./CreatePostPrompt.jsx";
+import Post from "../components/post.jsx";
 import { useAuth } from "../../../backend/contexts/authContext/index.jsx";
 import { db } from "../../../backend/firebase/firebase.js";
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, query, orderBy } from 'firebase/firestore';
 import '../styles/timeline.css';
 
 function HomePage() {
     const [user, setUser] = useState(null);
-    const { currentUser } = useAuth(); 
+    const [posts, setPosts] = useState([]);
+    const { currentUser } = useAuth();
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -36,11 +38,36 @@ function HomePage() {
         fetchUserData();
     }, [currentUser]);
 
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const postsCollectionRef = collection(db, "posts");
+                const postsQuery = query(postsCollectionRef, orderBy('createdAt', 'desc'));
+                const postsSnapshot = await getDocs(postsQuery);
+
+                const postsData = postsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                setPosts(postsData);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                setError('Error fetching posts. Please try again later.');
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
     return (
         <div className="timeline-container container-lg">
             <div className="timeline-config">
                 {error && <div className="error-message">{error}</div>}
                 {user && <CreatePostPrompt user={user} />}
+                <div className="posts-container">
+                    <div>
+                        {posts.map((post) => (
+                            <Post key={post.id} post={post} user={user} />
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     );
