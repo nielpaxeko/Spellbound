@@ -1,4 +1,13 @@
-Step into a magical realm where students from all wizarding schools across the globe come together to connect, share, and explore. Whether you're from Hogwarts, Beauxbatons, Durmstrang, or any of the other magical academies, Spellbound is the place to express your unique identity, engage with other wizards around the world.
+Spellbound is a Placeholder, the name of the site is Rover. A social media site aimed at travelers meant for sharing travel experiences with others. Current features supported are:
+Authentication: Login/Logout/Profile Edit etc
+Post: Post creation
+
+Future Updates include:
+Post sharing
+Private and Group messaging 
+Travel Tracker
+Weather Forecast
+Itinerary Creator.
 
 After cloning the projrct:
 
