@@ -40,7 +40,7 @@ function NavigationBar() {
             console.error('Error logging out:', error);
         }
     };
-    
+
     const currentUser = auth.currentUser
 
     return (
@@ -68,6 +68,9 @@ function NavigationBar() {
                                         <i className="nav-icon bi bi-person-circle"></i> Profile
                                     </Nav.Link>
                                 )}
+                                <Nav.Link className="nav-link text-light" href="/weather">
+                                    <i className="nav-icon bi bi-cloud-sun"></i> Weather Map
+                                </Nav.Link>
                                 <Nav.Link className="nav-link text-light d-md-none" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                                     Log out
                                 </Nav.Link>

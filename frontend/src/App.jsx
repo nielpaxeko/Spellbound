@@ -7,7 +7,7 @@ import UserProfile from "./pages/UserProfile.jsx"
 import LandingPage from './pages/LandingPage.jsx';
 import EditProfilePage from './pages/EditProfilePage.jsx';
 import { AuthProvider } from '../../backend/contexts/authContext/index.jsx';
-
+import WeatherPage from './pages/WeatherPage.jsx'; 
 
 const App = () => {
   return (
@@ -21,6 +21,7 @@ const App = () => {
           <Route path="/home" element={<HomePage />} />
           <Route path="/profile/:uid" element={<UserProfile />} />
           <Route path="/profile/:uid/edit" element={<EditProfilePage />} />
+          <Route path="/weather" element={<WeatherPage />} />
         </Routes>
       </Router>
     </AuthProvider>

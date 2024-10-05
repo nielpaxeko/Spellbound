@@ -61,12 +61,11 @@ function HomePage() {
             <div className="timeline-config">
                 {error && <div className="error-message">{error}</div>}
                 {user && <CreatePostPrompt user={user} />}
-                <div className="posts-container">
-                    <div>
-                        {posts.map((post) => (
-                            <Post key={post.id} post={post} user={user} />
-                        ))}
-                    </div>
+               
+                <div className="posts-container gap-3">
+                    {posts.map((post) => (
+                        <Post key={post.id} post={post} user={user} />
+                    ))}
                 </div>
             </div>
         </div>

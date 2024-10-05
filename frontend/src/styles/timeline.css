@@ -9,7 +9,10 @@
     gap: 20px;
 }
 
-.posts-container {}
+.posts-container {
+    display: flex;
+    flex-direction: column;
+}
 
 .timeline-config,
 .feed {
@@ -93,6 +96,47 @@
 
 /* Post CSS */
 
+.post-card {
+    border-width: 10px;
+}
+
+.post-header,
+.post-footer {
+    background-color: var(--kiss) !important;
+}
+
+.card-header {
+    background-color: var(--pink);
+}
+
+.post-info {
+    display: flex;
+}
+
+.post-content {
+    font-size: 1.25rem;
+}
+
+.post-media {
+    filter: brightness(0.7);
+}
+
+.post-header button {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-width: 50%;
+    border: 1px solid black;
+    background-color: var();
+}
+
+
+.post-header button::after {
+    display: none;
+}
+
 .post-footer {
     display: flex;
     flex-direction: column;
@@ -106,10 +150,10 @@
     gap: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
-  }
+}
 
 .social-btn {
-    display: flex;
+    display: inline-block;
     justify-content: center;
     align-items: center;
     flex-direction: row;
@@ -118,17 +162,11 @@
 }
 
 .post-icon {
-    font-size: 20px;
+    font-size: 15px;
 }
 
-.dropdown-toggle {
-    max-height: "25px";
-    display: "flex";
-    align-items: "center";
-    padding: "0px";
-    background-color: "transparent";
-    color: black;
-
+.dropdown-item {
+    color: #921A40;
 }
 
 @media only screen and (max-width: 768px) {
@@ -136,5 +174,18 @@
     .timeline-config,
     .feed {
         width: 90%;
+    }
+
+    .social-btn {
+        justify-content: end;
+    }
+
+    .post-action {
+        display: none;
+    }
+
+    .post-like {
+        display: flex;
+        justify-content: space-evenly;
     }
 }

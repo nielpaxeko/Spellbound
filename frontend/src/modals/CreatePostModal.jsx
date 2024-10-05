@@ -10,21 +10,13 @@ const CreatePostModal = ({ show, onHide, user }) => {
     const [content, setContent] = useState('');
     const [privacy, setPrivacy] = useState('public');
     const [mediaFile, setMediaFile] = useState(null);
-    const [mediaType, setMediaType] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
     const handleMediaChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const fileType = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : null;
-            if (fileType) {
-                setMediaType(fileType);
-                setMediaFile(file);
-            } else {
-                setErrorMessage('Please upload a valid image or video file.');
-                setMediaFile(null);
-            }
+            setMediaFile(file); // We no longer check the type here, will handle MIME type during upload
         }
     };
 
@@ -32,7 +24,9 @@ const CreatePostModal = ({ show, onHide, user }) => {
         const storageRef = ref(storage, `posts/${user.userID}/${file.name}`);
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
-        return downloadURL;
+
+        // Return both the media URL and its MIME type (for example "image/jpeg", "video/mp4")
+        return { mediaUrl: downloadURL, mediaType: file.type };
     };
 
     const handleCreatePost = async () => {
@@ -41,26 +35,24 @@ const CreatePostModal = ({ show, onHide, user }) => {
 
         try {
             const postData = {
-                userID: user.userID, 
+                userID: user.userID,
                 content,
                 privacy,
                 createdAt: new Date(),
             };
 
             if (mediaFile) {
-                const mediaUrl = await uploadMedia(mediaFile);
+                const { mediaUrl, mediaType } = await uploadMedia(mediaFile);
                 postData.mediaUrl = mediaUrl;
+                postData.mediaType = mediaType;
             }
 
-            // Add a new document to the posts collection in Firestore
             const postsCollectionRef = collection(db, "posts");
             await addDoc(postsCollectionRef, postData);
 
             setSuccessMessage('Post created successfully!');
-            setTitle('');
             setContent('');
             setMediaFile(null);
-            setMediaType(null);
         } catch (error) {
             console.error('Error creating post:', error);
             setErrorMessage('Error creating post. Please try again later.');
@@ -88,7 +80,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
                 <Form className="post-form" onSubmit={(e) => { e.preventDefault(); handleCreatePost(); }}>
                     {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
                     {successMessage && <Alert variant="success">{successMessage}</Alert>}
-                    
+
                     <Form.Group controlId="content">
                         <Form.Label>Content</Form.Label>
                         <Form.Control
@@ -111,13 +103,11 @@ const CreatePostModal = ({ show, onHide, user }) => {
 
                     {/* Preview media file if available */}
                     {mediaFile && (
-                        <p className="text-muted">
-                            {mediaType === 'image' ? 'Image selected' : 'Video selected'}
-                        </p>
+                        <p className="text-muted">{mediaFile.type.startsWith('image') ? 'Image selected' : 'Video selected'}</p>
                     )}
 
                     {/* Actual Media Preview */}
-                    {mediaFile && mediaType === 'image' && (
+                    {mediaFile && mediaFile.type.startsWith('image') && (
                         <img
                             src={URL.createObjectURL(mediaFile)}
                             alt="Preview"
@@ -125,7 +115,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
                         />
                     )}
 
-                    {mediaFile && mediaType === 'video' && (
+                    {mediaFile && mediaFile.type.startsWith('video') && (
                         <video
                             controls
                             src={URL.createObjectURL(mediaFile)}
