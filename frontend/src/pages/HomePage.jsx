@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import CreatePostPrompt from "./CreatePostPrompt.jsx";
+import { Alert } from "react-bootstrap";
 import Post from "../components/post.jsx";
 import { useAuth } from "../../../backend/contexts/authContext/index.jsx";
 import { db } from "../../../backend/firebase/firebase.js";
-import { collection, getDocs, getDoc, doc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, query, orderBy, deleteDoc, where } from 'firebase/firestore';
 import '../styles/timeline.css';
 
 function HomePage() {
@@ -11,6 +12,7 @@ function HomePage() {
     const [posts, setPosts] = useState([]);
     const { currentUser } = useAuth();
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -20,7 +22,6 @@ function HomePage() {
             }
 
             try {
-                // Fetch the user profile from Firestore using the currentUser's uid
                 const userDocRef = doc(db, "users", currentUser.uid);
                 const userDoc = await getDoc(userDocRef);
 
@@ -59,20 +60,50 @@ function HomePage() {
         fetchPosts();
     }, []);
 
-    // Function to handle adding a new post
+    // Function to handle adding and deleting posts
     const handleAddPost = (newPost) => {
         setPosts((prevPosts) => [newPost, ...prevPosts]);
+    };
+
+    const handleDeletePost = async (postId) => {
+        try {
+            // First, delete all likes for the post
+            const likesRef = collection(db, "postLikes");
+            const likeQuery = query(likesRef, where("postID", "==", postId));
+            const likeDocs = await getDocs(likeQuery);
+
+            // Delete all likes
+            const deleteLikesPromises = likeDocs.docs.map(likeDoc => deleteDoc(likeDoc.ref));
+            await Promise.all(deleteLikesPromises);
+
+            // Then, delete the post itself
+            await deleteDoc(doc(db, "posts", postId));
+            setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+            setSuccess('Post deleted successfully.');
+            setTimeout(() => setSuccess(null), 3000);
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            setError('Error deleting post. Please try again later.');
+            setTimeout(() => setError(null), 3000);
+        }
     };
 
     return (
         <div className="timeline-container container-lg">
             <div className="timeline-config">
-                {error && <div className="error-message">{error}</div>}
+
+                {success && <Alert variant="success">{success}</Alert>}
+                {error && <Alert variant="success">{error}</Alert>}
                 {user && <CreatePostPrompt user={user} onAddPost={handleAddPost} />}
 
                 <div className="posts-container gap-3">
                     {posts.map((post) => (
-                        <Post key={post.id} post={post} user={user} />
+                        <Post
+                            key={post.id}
+                            post={post}
+                            user={user}
+                            onDeletePost={handleDeletePost}
+                        />
                     ))}
                 </div>
             </div>

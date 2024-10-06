@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Image, Button, Dropdown, NavLink } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { db } from "../../../backend/firebase/firebase.js";
+import EditPostModal from "../modals/EditPostModal.jsx";
 import {
     collection,
     query,
@@ -28,18 +29,27 @@ const handleLikeToggle = async (postId, userId, setHasLiked) => {
 
         if (!likeDoc.empty) {
             await deleteDoc(likeDoc.docs[0].ref);
-            setHasLiked(false); // Update the like state
+            setHasLiked(false);
         }
     } else {
         await addDoc(likesRef, { postID: postId, userID: userId });
-        setHasLiked(true); // Update the like state
+        setHasLiked(true);
     }
 };
 
-const Post = ({ post, user }) => {
-    const { content, createdAt } = post;
+
+const Post = ({ post, user, onDeletePost }) => {
+    const { content, createdAt, updatedAt } = post;
     const [hasLiked, setHasLiked] = useState(false);
-    const postDate = createdAt instanceof Date ? createdAt : createdAt.toDate();
+    const [showEditModal, setShowEditModal] = useState(false);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const [showUpdatedAt, setShowUpdatedAt] = useState(false);
+
+    const postDate = post.createdAt instanceof Date ? post.createdAt : post.createdAt.toDate();
+    const formattedPostDate = postDate.toLocaleDateString('en-US', options);
+    const updateDate = post?.createdAt instanceof Date ? post?.createdAt : post?.createdAt.toDate();
+    const formattedUpdateDate = updateDate.toLocaleDateString('en-US', options);
+
 
     useEffect(() => {
         const checkUserLikedPost = async () => {
@@ -49,6 +59,18 @@ const Post = ({ post, user }) => {
 
         checkUserLikedPost();
     }, [post.id, user.userID]);
+
+    const handleDelete = () => {
+        if (window.confirm("Are you sure you want to delete this post?")) {
+            onDeletePost(post.id);
+        }
+    };
+
+    const handleEditPost = (updatedPost) => {
+        // Here you would typically also want to update the local state or perform any additional updates
+        // For example, you can set the post content to the new updated post.
+        setShowEditModal(false);
+    };
 
     return (
         <Card className="post-card border border-dark rounded-2">
@@ -65,8 +87,8 @@ const Post = ({ post, user }) => {
                             <NavLink href="#" className="text-decoration-none text-dark fw-bold">
                                 {user.username}
                             </NavLink>
-                            <div className="post-info text-muted small gap-1">
-                                {post.createdAt.toDate().toLocaleString()}
+                            <div className="post-info secondary text-muted small gap-1 ">
+                                {formattedPostDate.toLocaleString() + " · "}
                                 {post?.privacy === "public" && (
                                     <i className="bi bi-globe-americas post-icon"></i>
                                 )}
@@ -76,6 +98,12 @@ const Post = ({ post, user }) => {
                                 {post?.privacy === "private" && (
                                     <i className="bi bi-lock-fill post-icon"></i>
                                 )}
+
+                                {showUpdatedAt && post.updatedAt && (
+                                    <span className="text-muted updatedDate"> · (Edited {formattedUpdateDate.toLocaleString()})</span>
+                                )}
+                                ·
+                                <i onClick={() => setShowUpdatedAt(prev => !prev)} className="bi bi-pencil post-icon"></i>
                             </div>
                         </div>
                     </div>
@@ -85,16 +113,35 @@ const Post = ({ post, user }) => {
                                 <i className="bi bi-three-dots"></i>
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item href="#">Edit Post</Dropdown.Item>
-                                <Dropdown.Item href="#">Delete Post</Dropdown.Item>
-                                <Dropdown.Item href="#">Report Post</Dropdown.Item>
+                                {/* Only post OP can delete and edit their own posts */}
+                                {user.userID === post.userID ? (
+                                    <>
+                                        <Dropdown.Item onClick={() => setShowEditModal(true)}>Edit Post</Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={handleDelete}
+                                            href="#"
+                                            className="text-danger"
+                                            style={{ backgroundColor: "rgba(255, 0, 0, 0.1)" }}
+                                        >
+                                            Delete Post
+                                        </Dropdown.Item>
+                                    </>
+                                ) : (
+                                    <Dropdown.Item
+                                        href="#"
+                                        className="text-warning"
+                                        style={{ backgroundColor: "rgba(255, 165, 0, 0.1)" }}
+                                    >
+                                        Report Post
+                                    </Dropdown.Item>
+                                )}
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>
                 </div>
             </Card.Header>
             <Card.Body>
-                <Card.Text className="post-content">{post.content}</Card.Text>
+                <Card.Text className="post-content secondary">{content}</Card.Text>
                 {post.mediaUrl && (
                     <div className="post-media">
                         {post.mediaType?.startsWith('image') ? (
@@ -111,7 +158,7 @@ const Post = ({ post, user }) => {
                         className={`social-btn gap-1 rounded-5 ${hasLiked ? 'liked' : ''}`}
                         onClick={() => handleLikeToggle(post.id, user.userID, setHasLiked)}
                         style={{
-                            backgroundColor: hasLiked ? '#DC143C' : '', 
+                            backgroundColor: hasLiked ? '#DC143C' : '',
                         }}>
                         <span className="post-action">Like</span>
                         <i className="bi bi-hand-thumbs-up post-icon"></i>
@@ -126,16 +173,26 @@ const Post = ({ post, user }) => {
                     </Button>
                 </div>
             </Card.Footer>
+
+            <EditPostModal
+                show={showEditModal}
+                onHide={() => setShowEditModal(false)}
+                user={user}
+                post={post}
+                onUpdatePost={handleEditPost}
+            />
         </Card>
     );
 };
 
 Post.propTypes = {
+    onDeletePost: PropTypes.func.isRequired,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
         userID: PropTypes.string.isRequired,
         createdAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.object]).isRequired,
+        updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.object]),
         mediaUrl: PropTypes.string,
         mediaType: PropTypes.string,
         privacy: PropTypes.string,

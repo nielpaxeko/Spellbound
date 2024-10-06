@@ -2,13 +2,13 @@ import { Button, Dropdown, Modal, Form, Alert } from "react-bootstrap";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { db, storage } from "../../../backend/firebase/firebase.js";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '../styles/timeline.css';
 
-const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
-    const [content, setContent] = useState('');
-    const [privacy, setPrivacy] = useState('public');
+const EditPostModal = ({ show, onHide, user, post, onUpdatePost }) => {
+    const [content, setContent] = useState(post.content);
+    const [privacy, setPrivacy] = useState(post.privacy);
     const [mediaFile, setMediaFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -27,59 +27,46 @@ const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
         return { mediaUrl: downloadURL, mediaType: file.type };
     };
 
-    const handleCreatePost = async () => {
+    const handleEditPost = async () => {
         setErrorMessage('');
         setSuccessMessage('');
 
         try {
-            const postData = {
+            const postRef = doc(db, "posts", post.id);
+            const updatedPostData = {
                 userID: user.userID,
                 content,
                 privacy,
-                createdAt: new Date(),
+                updatedAt: new Date(),
             };
 
             if (mediaFile) {
                 const { mediaUrl, mediaType } = await uploadMedia(mediaFile);
-                postData.mediaUrl = mediaUrl;
-                postData.mediaType = mediaType;
+                updatedPostData.mediaUrl = mediaUrl;
+                updatedPostData.mediaType = mediaType;
             }
 
-            const postsCollectionRef = collection(db, "posts");
-            const docRef = await addDoc(postsCollectionRef, postData);
-            // Refresh HomePage:
-            const newPost = { id: docRef.id, ...postData };
-            onAddPost(newPost);
-            setSuccessMessage('Post created successfully!');
+            await updateDoc(postRef, updatedPostData);
+            onUpdatePost({ id: post.id, ...updatedPostData }); // Update in local state
+            setSuccessMessage('Post updated successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
             setContent('');
             setMediaFile(null);
+            onHide(); // Close modal after successful update
         } catch (error) {
-            console.error('Error creating post:', error);
-            setErrorMessage('Error creating post. Please try again later.');
+            console.error('Error updating post:', error);
+            setErrorMessage('Error updating post. Please try again later.');
             setTimeout(() => setErrorMessage(null), 3000);
         }
     };
 
     return (
-        <Modal show={show} onHide={onHide} className="create-post-template">
+        <Modal show={show} onHide={onHide} className="edit-post-template">
             <Modal.Header closeButton>
-                <Modal.Title className="post-modal-title">
-                    Create Post
-                    <Dropdown onSelect={(e) => setPrivacy(e)} style={{ marginLeft: "10px" }}>
-                        <Dropdown.Toggle variant="light" id="dropdown-basic">
-                            {privacy.charAt(0).toUpperCase() + privacy.slice(1)}
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item eventKey="public">Public</Dropdown.Item>
-                            <Dropdown.Item eventKey="private">Private</Dropdown.Item>
-                            <Dropdown.Item eventKey="friends">Friends</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                </Modal.Title>
+                <Modal.Title className="post-modal-title">Edit Post</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form className="post-form" onSubmit={(e) => { e.preventDefault(); handleCreatePost(); }}>
+                <Form className="post-form" onSubmit={(e) => { e.preventDefault(); handleEditPost(); }}>
                     {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
                     {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
@@ -88,7 +75,6 @@ const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
                         <Form.Control
                             as="textarea"
                             rows={3}
-                            placeholder="What's on your mind?"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                         />
@@ -103,12 +89,10 @@ const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
                         />
                     </Form.Group>
 
-                    {/* Preview media file if available */}
                     {mediaFile && (
                         <p className="text-muted">{mediaFile.type.startsWith('image') ? 'Image selected' : 'Video selected'}</p>
                     )}
 
-                    {/* Actual Media Preview */}
                     {mediaFile && mediaFile.type.startsWith('image') && (
                         <img
                             src={URL.createObjectURL(mediaFile)}
@@ -125,7 +109,7 @@ const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
                         />
                     )}
 
-                    <Button type="submit" className="mt-3">Create Post</Button>
+                    <Button type="submit" className="mt-3">Update Post</Button>
                 </Form>
             </Modal.Body>
         </Modal>
@@ -133,10 +117,12 @@ const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
 };
 
 // Add PropTypes to validate props
-CreatePostModal.propTypes = {
+EditPostModal.propTypes = {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
-    onAddPost: PropTypes.func.isRequired,
+    post: PropTypes.object.isRequired,
+    onUpdatePost: PropTypes.func.isRequired,
 };
-export default CreatePostModal;
+
+export default EditPostModal;
