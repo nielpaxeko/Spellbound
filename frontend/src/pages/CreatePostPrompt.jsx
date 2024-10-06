@@ -1,17 +1,14 @@
 import { Button } from "react-bootstrap";
 import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import '../styles/timeline.css';
-import axios from 'axios';
 import CreatePostModal from '../modals/CreatePostModal.jsx';
-import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PropTypes from 'prop-types';
 
 
-function CreatePostPrompt({ user }) {
+function CreatePostPrompt({ user, onAddPost }) {
     const [showCreatePostModal, setShowCreatePostModal] = useState(false);
-
     const profilePicture = user?.profilePicture || defaultProfilePicture;
 
     return (
@@ -33,11 +30,13 @@ function CreatePostPrompt({ user }) {
                 show={showCreatePostModal}
                 onHide={() => setShowCreatePostModal(false)}
                 user={user}
+                onAddPost={onAddPost}
             />
         </div>
-    )
+    );
 }
 CreatePostPrompt.propTypes = {
     user: PropTypes.object.isRequired,
+    onAddPost: PropTypes.func.isRequired,
 };
 export default CreatePostPrompt;

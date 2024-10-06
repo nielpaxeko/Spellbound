@@ -12,6 +12,7 @@
 .posts-container {
     display: flex;
     flex-direction: column;
+    margin-bottom: 30px;
 }
 
 .timeline-config,
@@ -153,11 +154,11 @@
 }
 
 .social-btn {
-    display: inline-block;
+    display: flex !important;
+    padding: 0;
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    gap: 5px;
     width: 150px;
 }
 
@@ -169,6 +170,18 @@
     color: #921A40;
 }
 
+.liked {
+    background-color: #DC143C;
+    color: #fff;
+}
+
+.liked:hover {
+    background-color: white !important;
+    color: #DC143C;
+    border: 1px solid #DC143C;
+}
+
+
 @media only screen and (max-width: 768px) {
 
     .timeline-config,
@@ -176,16 +189,8 @@
         width: 90%;
     }
 
-    .social-btn {
-        justify-content: end;
-    }
-
     .post-action {
         display: none;
     }
 
-    .post-like {
-        display: flex;
-        justify-content: space-evenly;
-    }
 }

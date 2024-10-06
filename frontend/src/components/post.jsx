@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Image, Button, Dropdown, NavLink } from "react-bootstrap";
 import PropTypes from "prop-types";
+import { db } from "../../../backend/firebase/firebase.js";
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc,
+    deleteDoc
+} from "firebase/firestore";
 
 const hasUserLikedPost = async (postId, userId) => {
     const likesRef = collection(db, "postLikes");
@@ -9,32 +18,38 @@ const hasUserLikedPost = async (postId, userId) => {
     return !likeDoc.empty;
 };
 
-const handleLikeToggle = async (postId, userId) => {
+const handleLikeToggle = async (postId, userId, setHasLiked) => {
     const likesRef = collection(db, "postLikes");
-    // Check if the user has already liked the post
     const hasLiked = await hasUserLikedPost(postId, userId);
-    if (hasLiked) { // Remove the like
 
+    if (hasLiked) { // Remove the like
         const likeQuery = query(likesRef, where("postID", "==", postId), where("userID", "==", userId));
         const likeDoc = await getDocs(likeQuery);
+
         if (!likeDoc.empty) {
             await deleteDoc(likeDoc.docs[0].ref);
+            setHasLiked(false); // Update the like state
         }
     } else {
         await addDoc(likesRef, { postID: postId, userID: userId });
+        setHasLiked(true); // Update the like state
     }
 };
-const countLikesForPost = async (postId) => {
-    const likesRef = collection(db, "postLikes");
-    const likeQuery = query(likesRef, where("postID", "==", postId));
-    const likeDocs = await getDocs(likeQuery);
-    return likeDocs.size;
-};
-
-
-
 
 const Post = ({ post, user }) => {
+    const { content, createdAt } = post;
+    const [hasLiked, setHasLiked] = useState(false);
+    const postDate = createdAt instanceof Date ? createdAt : createdAt.toDate();
+
+    useEffect(() => {
+        const checkUserLikedPost = async () => {
+            const liked = await hasUserLikedPost(post.id, user.userID);
+            setHasLiked(liked);
+        };
+
+        checkUserLikedPost();
+    }, [post.id, user.userID]);
+
     return (
         <Card className="post-card border border-dark rounded-2">
             <Card.Header className="post-header">
@@ -92,19 +107,22 @@ const Post = ({ post, user }) => {
             </Card.Body>
             <Card.Footer className="post-footer">
                 <div className="post-footer-options">
-                    <Button className="social-btn rounded-5" handleLikeToggle>
-                        <div className="post-like">
-                            <i className="bi bi-hand-thumbs-up post-icon"></i>
-                            <span className="post-action">Like</span>
-                        </div>
+                    <Button
+                        className={`social-btn gap-1 rounded-5 ${hasLiked ? 'liked' : ''}`}
+                        onClick={() => handleLikeToggle(post.id, user.userID, setHasLiked)}
+                        style={{
+                            backgroundColor: hasLiked ? '#DC143C' : '', 
+                        }}>
+                        <span className="post-action">Like</span>
+                        <i className="bi bi-hand-thumbs-up post-icon"></i>
                     </Button>
-                    <Button className="social-btn rounded-5">
-                        <i className="bi bi-chat-dots post-icon"></i>
+                    <Button className="social-btn gap-1 rounded-5">
                         <span className="post-action">Comment</span>
+                        <i className="bi bi-chat-dots post-icon"></i>
                     </Button>
-                    <Button className="social-btn rounded-5">
-                        <i className="bi bi-send post-icon"></i>
+                    <Button className="social-btn gap-1 rounded-5">
                         <span className="post-action">Share</span>
+                        <i className="bi bi-send post-icon"></i>
                     </Button>
                 </div>
             </Card.Footer>
@@ -117,12 +135,13 @@ Post.propTypes = {
         id: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
         userID: PropTypes.string.isRequired,
-        createdAt: PropTypes.object.isRequired,
+        createdAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.object]).isRequired,
         mediaUrl: PropTypes.string,
         mediaType: PropTypes.string,
         privacy: PropTypes.string,
     }).isRequired,
     user: PropTypes.shape({
+        userID: PropTypes.string.isRequired,
         profilePicture: PropTypes.string.isRequired,
         username: PropTypes.string.isRequired,
     }).isRequired,

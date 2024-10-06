@@ -45,7 +45,10 @@ function HomePage() {
                 const postsQuery = query(postsCollectionRef, orderBy('createdAt', 'desc'));
                 const postsSnapshot = await getDocs(postsQuery);
 
-                const postsData = postsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                const postsData = postsSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
                 setPosts(postsData);
             } catch (error) {
                 console.error('Error fetching posts:', error);
@@ -56,12 +59,17 @@ function HomePage() {
         fetchPosts();
     }, []);
 
+    // Function to handle adding a new post
+    const handleAddPost = (newPost) => {
+        setPosts((prevPosts) => [newPost, ...prevPosts]);
+    };
+
     return (
         <div className="timeline-container container-lg">
             <div className="timeline-config">
                 {error && <div className="error-message">{error}</div>}
-                {user && <CreatePostPrompt user={user} />}
-               
+                {user && <CreatePostPrompt user={user} onAddPost={handleAddPost} />}
+
                 <div className="posts-container gap-3">
                     {posts.map((post) => (
                         <Post key={post.id} post={post} user={user} />

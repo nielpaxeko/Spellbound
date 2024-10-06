@@ -6,7 +6,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '../styles/timeline.css';
 
-const CreatePostModal = ({ show, onHide, user }) => {
+const CreatePostModal = ({ show, onHide, user, onAddPost }) => {
     const [content, setContent] = useState('');
     const [privacy, setPrivacy] = useState('public');
     const [mediaFile, setMediaFile] = useState(null);
@@ -16,7 +16,7 @@ const CreatePostModal = ({ show, onHide, user }) => {
     const handleMediaChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setMediaFile(file); // We no longer check the type here, will handle MIME type during upload
+            setMediaFile(file);
         }
     };
 
@@ -24,8 +24,6 @@ const CreatePostModal = ({ show, onHide, user }) => {
         const storageRef = ref(storage, `posts/${user.userID}/${file.name}`);
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
-
-        // Return both the media URL and its MIME type (for example "image/jpeg", "video/mp4")
         return { mediaUrl: downloadURL, mediaType: file.type };
     };
 
@@ -48,8 +46,10 @@ const CreatePostModal = ({ show, onHide, user }) => {
             }
 
             const postsCollectionRef = collection(db, "posts");
-            await addDoc(postsCollectionRef, postData);
-
+            const docRef = await addDoc(postsCollectionRef, postData);
+            // Refresh HomePage:
+            const newPost = { id: docRef.id, ...postData };
+            onAddPost(newPost);
             setSuccessMessage('Post created successfully!');
             setContent('');
             setMediaFile(null);
@@ -135,5 +135,6 @@ CreatePostModal.propTypes = {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
+    onAddPost: PropTypes.func.isRequired,
 };
 export default CreatePostModal;
