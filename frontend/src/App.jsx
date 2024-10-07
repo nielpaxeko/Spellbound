@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage.jsx';
 import EditProfilePage from './pages/EditProfilePage.jsx';
 import { AuthProvider } from '../../backend/contexts/authContext/index.jsx';
 import WeatherPage from './pages/WeatherPage.jsx'; 
+// import Messages from './pages/Messages.jsx'
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/profile/:uid" element={<UserProfile />} />
           <Route path="/profile/:uid/edit" element={<EditProfilePage />} />
           <Route path="/weather" element={<WeatherPage />} />
+          {/* <Route path="/messages" element={<Messages />} /> */}
         </Routes>
       </Router>
     </AuthProvider>
