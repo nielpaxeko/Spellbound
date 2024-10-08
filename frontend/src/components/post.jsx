@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Card, Image, Button, Dropdown, NavLink } from "react-bootstrap";
+import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import PropTypes from "prop-types";
 import { db } from "../../../backend/firebase/firebase.js";
 import EditPostModal from "../modals/EditPostModal.jsx";
-import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
+import CreateCommentPrompt from "../prompts/CreateCommentPrompt.jsx";
+import CommentCarousel from "../components/commentCarousel.jsx";
 import {
     collection,
     query,
@@ -14,7 +16,6 @@ import {
     doc,
     getDoc,
 } from "firebase/firestore";
-
 // This code is for calculating a post's age
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -48,6 +49,15 @@ const Post = ({ post, user, onDeletePost }) => {
     const updateDate = post?.createdAt instanceof Date ? post?.createdAt : post?.createdAt.toDate();
     const timeAgo = getTimeAgo(postDate);
     const updatedTimeAgo = getTimeAgo(updateDate);
+    const [showComments, setShowComments] = useState(false);
+
+    const toggleComments = () => {
+        setShowComments((prev) => !prev);
+    };
+
+    const handleCommentAdded = () => {
+        console.log("Comment added!");
+    };
 
     useEffect(() => {
         const checkUserLikedPost = async () => {
@@ -225,7 +235,7 @@ const Post = ({ post, user, onDeletePost }) => {
                         <i className="bi bi-hand-thumbs-up-fill post-icon"></i>
                     </Button>
                     <Button className="social-btn gap-1 rounded-5">
-                        <span className="post-action">Comment</span>
+                        <span className="post-action">Comments</span>
                         <i className="bi bi-chat-dots-fill post-icon"></i>
                     </Button>
                     <Button className="social-btn gap-1 rounded-5">
@@ -233,6 +243,13 @@ const Post = ({ post, user, onDeletePost }) => {
                         <i className="bi bi-send-fill post-icon"></i>
                     </Button>
                 </div>
+                {/* Create Comment Input */}
+                <CreateCommentPrompt
+                    postID={post.id}
+                    user={user}
+                    onCommentAdded={handleCommentAdded}
+                />
+                <CommentCarousel postID={post.id} />
             </Card.Footer>
 
             <EditPostModal

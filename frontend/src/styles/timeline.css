@@ -182,6 +182,45 @@
     border: 1px solid #DC143C;
 }
 
+/* Comments */
+
+.comment-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    padding: 8px;
+}
+
+.create-comment-prompt {
+    display: flex;
+    flex-direction: row;
+}
+
+.comment-prompt {
+    border: 1px solid black;
+}
+
+.comment-prompt:hover {
+    transform: none;
+}
+
+.comment {
+    padding: 5px;
+    min-height: 65px;
+    background-color: white;
+    width: 90%;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.comment-carousel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 
 @media only screen and (max-width: 768px) {
 
