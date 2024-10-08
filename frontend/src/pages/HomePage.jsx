@@ -96,7 +96,7 @@ function HomePage() {
                 {error && <Alert variant="success">{error}</Alert>}
                 {user && <CreatePostPrompt user={user} onAddPost={handleAddPost} />}
 
-                <div className="posts-container gap-3">
+                <div className="posts-container gap-3 mt-3">
                     {posts.map((post) => (
                         <Post
                             key={post.id}

@@ -15,7 +15,7 @@ function CreatePostPrompt({ user, onAddPost }) {
         <div className="create-post-prompt shadow-sm border rounded-5 p-3 bg-white shadow box-area">
             <div className="prompt-info">
                 <a className="user-link" href={`/profile/${user?.userID}`} style={{ textDecoration: "none" }}>
-                    <img src={profilePicture} alt="Profile pic" className="profile-picture" width={50} height={50} />
+                    <img src={profilePicture} alt="Profile pic" className="profile-picture rounded-circle" width={50} height={50} />
                 </a>
                 <p className="username">
                     What's on your mind{" "} {user.username}?

@@ -3,34 +3,29 @@ import { Card, Image, Button, Dropdown, NavLink } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { db } from "../../../backend/firebase/firebase.js";
 import EditPostModal from "../modals/EditPostModal.jsx";
+import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import {
     collection,
     query,
     where,
     getDocs,
     addDoc,
-    deleteDoc
+    deleteDoc,
+    doc,
+    getDoc,
 } from "firebase/firestore";
 
-// Utility function to calculate time ago
-const getTimeAgo = (date) => {
-    const now = new Date();
-    const secondsAgo = Math.floor((now - date) / 1000);
+// This code is for calculating a post's age
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
-    if (secondsAgo < 60) {
-        return `${secondsAgo} seconds ago`;
-    } else if (secondsAgo < 3600) {
-        const minutes = Math.floor(secondsAgo / 60);
-        return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-    } else if (secondsAgo < 86400) {
-        const hours = Math.floor(secondsAgo / 3600);
-        return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-    } else {
-        const days = Math.floor(secondsAgo / 86400);
-        return `${days} day${days > 1 ? "s" : ""} ago`;
-    }
+// Utility function to calculate the post's age
+const getTimeAgo = (date) => {
+    return dayjs(date).fromNow();
 };
 
+// Get the likes of a post
 const formatLikesCount = (likesCount) => {
     if (likesCount < 1000) {
         return `${likesCount}`;
@@ -42,20 +37,15 @@ const formatLikesCount = (likesCount) => {
 };
 
 
-
-
-
-
 const Post = ({ post, user, onDeletePost }) => {
     const { content, createdAt, updatedAt } = post;
     const [hasLiked, setHasLiked] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
-
+    const [postAuthor, setPostAuthor] = useState(null);
+    // Get time ago string
     const postDate = post.createdAt instanceof Date ? post.createdAt : post.createdAt.toDate();
     const updateDate = post?.createdAt instanceof Date ? post?.createdAt : post?.createdAt.toDate();
-
-    // Get time ago string
     const timeAgo = getTimeAgo(postDate);
     const updatedTimeAgo = getTimeAgo(updateDate);
 
@@ -67,6 +57,21 @@ const Post = ({ post, user, onDeletePost }) => {
 
         checkUserLikedPost();
     }, [post.id, user.userID]);
+
+    // This use effect get's the post's data
+    useEffect(() => {
+        const fetchPostAuthor = async () => {
+            if (post.userID) {
+                const userDocRef = doc(db, "users", post.userID);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    setPostAuthor(userDoc.data());
+                }
+            }
+        };
+
+        fetchPostAuthor();
+    }, [post.userID]);
 
     useEffect(() => {
         const getLikesCount = async () => {
@@ -132,20 +137,20 @@ const Post = ({ post, user, onDeletePost }) => {
         <Card className="post-card border border-dark rounded-2">
             <Card.Header className="post-header">
                 <div className="d-flex align-items-center">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center post-info">
                         <a href={`/profile/${post?.userID}`}>
                             <Image
                                 className="profile-picture"
-                                src={user.profilePicture}
+                                src={postAuthor?.profilePicture || defaultProfilePicture}
                                 roundedCircle
-                                style={{ width: "40px", height: "40px" }}
+                                style={{ width: "45px", height: "45px" }}
                             />
                         </a>
-                        <div className="ms-2">
-                            <NavLink href="#" className="text-decoration-none text-dark fw-bold">
-                                {user.username}
+                        <div className="post-info ms-2">
+                            <NavLink href={`/profile/${post?.userID}`} className="text-decoration-none text-dark fw-bold">
+                                {postAuthor?.username}
                             </NavLink>
-                            <div className="post-info secondary text-muted small gap-1 ">
+                            <div className="secondary text-muted small d-flex gap-1 ">
                                 {timeAgo + " · "}
                                 {post?.privacy === "public" && (
                                     <i className="bi bi-globe-americas post-icon"></i>
@@ -216,16 +221,16 @@ const Post = ({ post, user, onDeletePost }) => {
                         onClick={() => handleLikeToggle(post.id, user.userID, setHasLiked)}
                         style={{ backgroundColor: hasLiked ? '#DC143C' : '', }}
                     >
-                        <span className="post-action secondary">{formatLikesCount(likesCount)}</span>
-                        <i className="bi bi-hand-thumbs-up post-icon"></i>
+                        <span className="secondary">{formatLikesCount(likesCount)}</span>
+                        <i className="bi bi-hand-thumbs-up-fill post-icon"></i>
                     </Button>
                     <Button className="social-btn gap-1 rounded-5">
                         <span className="post-action">Comment</span>
-                        <i className="bi bi-chat-dots post-icon"></i>
+                        <i className="bi bi-chat-dots-fill post-icon"></i>
                     </Button>
                     <Button className="social-btn gap-1 rounded-5">
                         <span className="post-action">Share</span>
-                        <i className="bi bi-send post-icon"></i>
+                        <i className="bi bi-send-fill post-icon"></i>
                     </Button>
                 </div>
             </Card.Footer>
