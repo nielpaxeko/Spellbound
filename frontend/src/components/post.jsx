@@ -6,6 +6,7 @@ import { db } from "../../../backend/firebase/firebase.js";
 import EditPostModal from "../modals/EditPostModal.jsx";
 import CreateCommentPrompt from "../prompts/CreateCommentPrompt.jsx";
 import CommentCarousel from "../components/commentCarousel.jsx";
+import ViewPostModal from "../modals/ViewPostModal.jsx";
 import {
     collection,
     query,
@@ -49,14 +50,12 @@ const Post = ({ post, user, onDeletePost }) => {
     const updateDate = post?.createdAt instanceof Date ? post?.createdAt : post?.createdAt.toDate();
     const timeAgo = getTimeAgo(postDate);
     const updatedTimeAgo = getTimeAgo(updateDate);
+    const [comments, setComments] = useState([]);
     const [showComments, setShowComments] = useState(false);
+    const [showViewPostModal, setShowViewPostModal] = useState(false);
 
     const toggleComments = () => {
         setShowComments((prev) => !prev);
-    };
-
-    const handleCommentAdded = () => {
-        console.log("Comment added!");
     };
 
     useEffect(() => {
@@ -141,6 +140,23 @@ const Post = ({ post, user, onDeletePost }) => {
         getLikesCount();
     }, [post.id]);
 
+
+    // Comments
+    const fetchComments = async () => {
+        const commentsRef = collection(db, "postComments");
+        const commentsQuery = query(commentsRef, where("postID", "==", post.id));
+        const commentsSnapshot = await getDocs(commentsQuery);
+        const fetchedComments = commentsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setComments(fetchedComments);
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, [post.id]);
+
+    const handleCommentAdded = () => {
+        fetchComments();
+    };
 
 
     return (
@@ -234,7 +250,7 @@ const Post = ({ post, user, onDeletePost }) => {
                         <span className="secondary">{formatLikesCount(likesCount)}</span>
                         <i className="bi bi-hand-thumbs-up-fill post-icon"></i>
                     </Button>
-                    <Button className="social-btn gap-1 rounded-5">
+                    <Button onClick={() => setShowViewPostModal(true)} className="social-btn gap-1 rounded-5">
                         <span className="post-action">Comments</span>
                         <i className="bi bi-chat-dots-fill post-icon"></i>
                     </Button>
@@ -259,6 +275,12 @@ const Post = ({ post, user, onDeletePost }) => {
                 post={post}
                 onUpdatePost={handleEditPost}
             />
+            <ViewPostModal
+                show={showViewPostModal}
+                onHide={() => setShowViewPostModal(false)}
+                post={post}
+                user={user}
+            />
         </Card>
     );
 };
@@ -277,7 +299,7 @@ Post.propTypes = {
     }).isRequired,
     user: PropTypes.shape({
         userID: PropTypes.string.isRequired,
-        profilePicture: PropTypes.string.isRequired,
+        profilePicture: PropTypes.string,
         username: PropTypes.string.isRequired,
     }).isRequired,
 };

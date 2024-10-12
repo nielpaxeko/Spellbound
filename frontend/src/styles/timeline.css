@@ -206,12 +206,13 @@
 }
 
 .comment {
-    padding: 5px;
+    padding: 8px;
     min-height: 65px;
     background-color: white;
-    width: 90%;
-    margin-left: 8px;
-    margin-right: 8px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 8px;
 }
 
 .comment-carousel-btn {
@@ -220,6 +221,14 @@
     justify-content: center;
 }
 
+.comment-body {
+    width: 85%;
+}
+
+.comment-text {
+    background-color: lightgray;
+    padding: 8px;
+}
 
 
 @media only screen and (max-width: 768px) {

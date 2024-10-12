@@ -1,92 +1,57 @@
-import React, { useState, useEffect } from "react";
-import { Button, Image, Dropdown, Form } from "react-bootstrap";
-import { collection, query, where, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../../backend/firebase/firebase.js";
+import React from "react";
+import { Card, Image, Button, Dropdown, NavLink } from "react-bootstrap";
+import PropTypes from "prop-types";
+import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
+import dayjs from "dayjs"; // For time formatting
 
-const Comment = ({ comment, user, onReply }) => {
-    const [replies, setReplies] = useState([]);
-    const [showReplyInput, setShowReplyInput] = useState(false);
-
-    useEffect(() => {
-        const fetchReplies = async () => {
-            const repliesQuery = query(
-                collection(db, "postComments"),
-                where("parentID", "==", comment.id)
-            );
-            const repliesSnapshot = await getDocs(repliesQuery);
-            setReplies(repliesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        };
-
-        fetchReplies();
-    }, [comment.id]);
-
-    const handleDeleteComment = async () => {
-        if (window.confirm("Are you sure you want to delete this comment?")) {
-            await deleteDoc(doc(db, "postComments", comment.id));
-        }
-    };
+const Comment = ({ comment, author }) => {
+    const getTimeAgo = (date) => dayjs(date.toDate()).fromNow();
 
     return (
-        <div className="comment">
-            <div className="d-flex align-items-start justify-content-between">
-                <Image src={comment.authorProfilePicture || "/default-profile-picture.jpeg"} roundedCircle style={{ width: "35px", height: "35px" }} />
-                <div className="comment-content ms-2">
-                    <strong>{comment.authorUsername}</strong>
-                    <p className="small text-muted">{comment.content}</p>
+        <div className="d-flex comment rounded-4">
+            {/* Profile Picture */}
+            <Image
+                src={author?.profilePicture || defaultProfilePicture}
+                roundedCircle
+                className="profile-picture"
+                style={{ width: "40px", height: "40px", marginRight: "10px" }}
+            />
+            <div className="comment-body">
+                {/* Username and Time */}
+                <div className="d-flex align-items-center mb-1">
+                    <strong style={{ fontSize: "12px", color: "#0f0f0f" }}>
+                        {author?.username + " · "}
+                    </strong>
+                    <span style={{ fontSize: "12px", color: "#606060", marginLeft: "3px" }}>
+                        {getTimeAgo(comment.createdAt)}
+                    </span>
+                    {comment.updatedAt && (
+                        <span className="text-muted updatedDate"> · (Edited)</span>
+                    )}
                 </div>
-                {user.userID === comment.userID && (
-                    <Dropdown>
-                        <Dropdown.Toggle variant="link" className="text-muted">
-                            <i className="bi bi-three-dots"></i>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => setShowReplyInput(!showReplyInput)}>
-                                <i className="bi bi-reply"></i> Reply
-                            </Dropdown.Item>
-                            <Dropdown.Item onClick={handleDeleteComment}>
-                                <i className="bi bi-trash3-fill text-danger"></i> Delete
-                            </Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                )}
+                {/* Comment Text */}
+                <div className="comment-text rounded-4">
+                    <p style={{ fontSize: ".75rem", color: "#0f0f0f", margin: 0 }}>
+                        {comment.content}
+                    </p>
+                </div>
             </div>
-
-            {replies.map(reply => (
-                <Comment key={reply.id} comment={reply} user={user} onReply={onReply} />
-            ))}
-
-            {showReplyInput && (
-                <Form
-                    onSubmit={e => {
-                        e.preventDefault();
-                        onReply(e.target.replyText.value, comment.id);
-                        setShowReplyInput(false);
-                    }}
-                >
-                    <Form.Group>
-                        <Form.Control name="replyText" placeholder="Write a reply..." />
-                    </Form.Group>
-                </Form>
-            )}
         </div>
     );
 };
 
-// PropTypes validation
 Comment.propTypes = {
     comment: PropTypes.shape({
         id: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
-        authorUsername: PropTypes.string.isRequired,
-        authorProfilePicture: PropTypes.string,
+        createdAt: PropTypes.object.isRequired,
+        updatedAt: PropTypes.object,
         userID: PropTypes.string.isRequired,
     }).isRequired,
-    user: PropTypes.shape({
-        userID: PropTypes.string.isRequired,
+    author: PropTypes.shape({
+        username: PropTypes.string.isRequired,
         profilePicture: PropTypes.string,
-        username: PropTypes.string,
-    }).isRequired,
-    onReply: PropTypes.func.isRequired,
+    }),
 };
 
 export default Comment;
