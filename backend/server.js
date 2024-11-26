@@ -1,6 +1,7 @@
 import express from "express";
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
+import wanderlog from './routes/wanderlog.js';
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -20,8 +21,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Use existing route files
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+
+// Use the new countries and cities routes
+app.use("/api/wanderlogs", wanderlog);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

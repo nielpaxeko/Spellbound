@@ -63,14 +63,14 @@ function NavigationBar() {
                                 <Nav.Link className="nav-link text-light" href="/messages">
                                     <i className="nav-icon bi bi-chat"></i> Messages
                                 </Nav.Link>
+                                <Nav.Link className="nav-link text-light" href="/wanderlog">
+                                    <i className="nav-icon bi bi-globe-americas"></i> Wanderlog
+                                </Nav.Link>
                                 {user && (
                                     <Nav.Link className="nav-link text-light" href={`/profile/${currentUser.uid}`}>
                                         <i className="nav-icon bi bi-person-circle"></i> Profile
                                     </Nav.Link>
                                 )}
-                                <Nav.Link className="nav-link text-light" href="/weather">
-                                    <i className="nav-icon bi bi-cloud-sun"></i> Weather Map
-                                </Nav.Link>
                                 <Nav.Link className="nav-link text-light d-md-none" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                                     Log out
                                 </Nav.Link>
