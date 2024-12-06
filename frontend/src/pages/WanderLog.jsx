@@ -78,21 +78,33 @@ const WanderLog = () => {
     const fetchData = async () => {
         try {
             // Fetch cities
-            const citiesResponse = await fetch('/cities');
+            const citiesResponse = await fetch('/api/wanderlogs/cities');
             const cities = await citiesResponse.json();
             setValidCities(cities);
             populateCityAutocomplete(cities);
 
             // Fetch city data
-            const cityDataResponse = await fetch('/city-data');
+            const cityDataResponse = await fetch('/api/wanderlogs/city-data');
             const cityDataJson = await cityDataResponse.json();
             setCityData(cityDataJson);
 
             // Fetch countries GeoJSON
-            const countriesResponse = await fetch('/countries');
+            const countriesResponse = await fetch('/api/wanderlogs/countries');
             const countriesData = await countriesResponse.json();
 
-            // Rest of the code remains the same
+            // Add your country layer setup here
+            countryLayerRef.current = L.geoJSON(countriesData, {
+                style: function (feature) {
+                    return {
+                        color: '#3388ff',
+                        fillOpacity: 0.2
+                    };
+                },
+                onEachFeature: function (feature, layer) {
+                    layer.on('click', (event) => handleCountryClick(feature.properties.ADMIN, event));
+                }
+            }).addTo(mapInstanceRef.current);
+
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -179,6 +191,70 @@ const WanderLog = () => {
         });
     };
 
+    // City logic
+    const addCity = (status) => {
+        const cityName = document.getElementById('citySearch').value;
+        if (!cityName) {
+            return alert('Please enter a city name');
+        } else if (!validCities.includes(cityName)) {
+            return alert(cityName + " was not found.");
+        } else {
+            addCityToList(cityName, status);
+            updateMap();
+        }
+    };
+
+    const addCityToList = (cityName, status) => {
+        setVisitedCities(prev => prev.filter(c => c !== cityName));
+        setWantToVisitCities(prev => prev.filter(c => c !== cityName));
+
+        if (status === 'visited') {
+            setVisitedCities(prev => [...prev, cityName]);
+            zoomToCity(cityName);
+            addCityMarker(cityName, visitedIcon);
+            updateVisitedCounts();
+        } else if (status === 'want_to_visit') {
+            setWantToVisitCities(prev => [...prev, cityName]);
+            zoomToCity(cityName);
+            addCityMarker(cityName, wantedIcon);
+        }
+    };
+
+    const getCityCoordinates = (cityName) => {
+        const cityInfo = cityData.find(city => city.city === cityName);
+        return cityInfo ? [parseFloat(cityInfo.lat), parseFloat(cityInfo.lng)] : null;
+    };
+
+    const zoomToCity = (cityName) => {
+        const coordinates = getCityCoordinates(cityName);
+        if (coordinates) {
+            mapInstanceRef.current.flyTo(coordinates, 5, { duration: 0.5 });
+        }
+    };
+
+    const addCityMarker = (cityName, icon) => {
+        const coordinates = getCityCoordinates(cityName);
+        if (!coordinates) {
+            console.error(`City "${cityName}" not found or invalid coordinates.`);
+            return;
+        }
+        const marker = L.marker(coordinates, { icon: icon }).addTo(cityMarkersRef.current);
+        marker.on('click', function () {
+            const popupContent = `
+                <div style="text-align: center;">
+                    <strong>${cityName}</strong><br>
+                    <button onclick="window.removeCity('${cityName}'); window.closePopup();"
+                        style="background-color: red; color: white; border: none; padding: 5px 10px; margin-top: 5px; cursor: pointer;">
+                        Remove City
+                    </button>
+                </div>
+            `;
+            marker.bindPopup(popupContent).openPopup();
+        });
+    };
+
+
+
     const populateAutocomplete = (countries) => {
         const dataList = document.getElementById('countryList');
         dataList.innerHTML = '';
@@ -192,35 +268,35 @@ const WanderLog = () => {
     };
 
     const updateMap = () => {
-        fetch('/api/add-country', {
+        fetch('/api/wanderlogs/add-country', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ visited: visitedCountries, want_to_visit: wantToVisitCountries })
         })
-         .then(response => response.json())
-        .then(data => {
-            setVisitedCountries(data.visited);
-            setWantToVisitCountries(data.want_to_visit);
+            .then(response => response.json())
+            .then(data => {
+                setVisitedCountries(data.visited);
+                setWantToVisitCountries(data.want_to_visit);
 
-            // Update country colors
-            countryLayerRef.eachLayer(function (layer) {
-                var countryName = layer.feature.properties.ADMIN;
-                if (visitedCountries.includes(countryName)) {
-                    layer.setStyle({ color: '#ff9500', fillOpacity: 0.5 });
-                } else if (wantToVisitCountries.includes(countryName)) {
-                    layer.setStyle({ color: '#5A00FF', fillOpacity: 0.5 });
-                }
-            });
+                // Update country colors
+                countryLayerRef.eachLayer(function (layer) {
+                    var countryName = layer.feature.properties.ADMIN;
+                    if (visitedCountries.includes(countryName)) {
+                        layer.setStyle({ color: '#ff9500', fillOpacity: 0.5 });
+                    } else if (wantToVisitCountries.includes(countryName)) {
+                        layer.setStyle({ color: '#5A00FF', fillOpacity: 0.5 });
+                    }
+                });
 
-            // Clear and re-add city markers
-            cityMarkersRef.clearLayers();
-            visitedCities.forEach(city => addCityMarker(city, visitedIcon));
-            wantToVisitCities.forEach(city => addCityMarker(city, wantedIcon));
-            updateVisitedCounts();
-        })
-        .catch(err => console.error('Error:', err));
+                // Clear and re-add city markers
+                cityMarkersRef.clearLayers();
+                visitedCities.forEach(city => addCityMarker(city, visitedIcon));
+                wantToVisitCities.forEach(city => addCityMarker(city, wantedIcon));
+                updateVisitedCounts();
+            })
+            .catch(err => console.error('Error:', err));
 
-        fetch('/api/add-city', {
+        fetch('/api/wanderlogs/add-city', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ visited: visitedCities, want_to_visit: wantToVisitCities })
@@ -229,6 +305,18 @@ const WanderLog = () => {
             .then(data => {
                 // Existing logic
             });
+    };
+
+    const updateVisitedCounts = () => {
+        window.updateVisitedCounts = () => {
+            const countryCount = visitedCountries.length;
+            document.getElementById('countryCount').textContent = countryCount;
+            document.getElementById('countriesVisited').style.display = countryCount > 0 ? 'block' : 'none';
+
+            const cityCount = visitedCities.length;
+            document.getElementById('cityCount').textContent = cityCount;
+            document.getElementById('citiesVisited').style.display = cityCount > 0 ? 'block' : 'none';
+        };
     };
 
     const locateUser = () => {
@@ -263,8 +351,21 @@ const WanderLog = () => {
         });
     };
 
+    useEffect(() => {
+        window.addCountryToList = addCountryToList;
+        window.closePopup = () => mapInstanceRef.current.closePopup();
+        window.removeCity = (cityName) => {
+            setVisitedCities(prev => prev.filter(c => c !== cityName));
+            setWantToVisitCities(prev => prev.filter(c => c !== cityName));
+            cityMarkersRef.current.clearLayers();
+            updateVisitedCounts();
+            updateMap();
+        };
+        updateVisitedCounts();
+    }, []);
+
     return (
-        <section>
+        <section className='wanderlog-section'>
             <div>
                 <div
                     id="countriesTab"

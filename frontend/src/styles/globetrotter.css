@@ -2,12 +2,18 @@ body {
     font-family: Arial, sans-serif;
 }
 
+
 #map {
     height: 650px;
     width: 100%;
     position: relative;
     overflow: hidden;
     border-radius: 0px 20px 20px 20px;
+}
+
+.wanderlog-section {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #countrySearchSection,

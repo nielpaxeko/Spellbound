@@ -24,8 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 // Use existing route files
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
-
-// Use the new countries and cities routes
 app.use("/api/wanderlogs", wanderlog);
 
 app.listen(PORT, () => {
